@@ -10,7 +10,7 @@ def f(x1, x2):
     # return (((x1 * np.cos(x1)) / 20) + 2 * np.exp(-(x1 ** 2) - ((x2 - 1) ** 2)) + 0.01 * x1 * x2)
     # return ((x1 * np.sin(4 * np.pi * x1)) - (x2 * np.sin((4 * np.pi * x2) + np.pi)) + 1)
     # return ((-np.sin(x1) * np.sin((x1 ** 2)/np.pi) ** (2 * 10)) - (np.sin(x2) * np.sin((x2 ** 2)/np.pi) ** (2 * 10)))
-    return ((-(x2 + 47)) * np.sin(np.sqrt(np.positive((x1 / 2) + (x2 + 47))))) - (x1 * np.sin(np.sqrt(np.positive(x1 - (x2 + 47)))))
+    return ((-(x2 + 47)) * np.sin(np.sqrt(np.abs((x1 / 2) + (x2 + 47))))) - (x1 * np.sin(np.sqrt(np.abs(x1 - (x2 + 47)))))
 
 # x1 = np.linspace(-100, 100, 1000)
 # x1 = np.linspace(-2, 4, 1000)
