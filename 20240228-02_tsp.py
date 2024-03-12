@@ -22,8 +22,9 @@ while i<max_it and melhoria:
         x_candidato = perturb(x_otimo, e)
         f_candidato = f(x_candidato)
 
-plt.scatter(x_otimo, f_otimo, color=red, s=90, marker='x')
+plt.scatter(x_otimo, f_otimo, color='red', s=90, marker='x')
 x_axis = np.linspace(-2, 2, 1000)
 plt.plot(x_axis, f(x_axis))
 plt.grid()
-plt.show()
+#plt.show()
+plt.savefig('20240228-02_tsp.png')
