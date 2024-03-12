@@ -5,7 +5,7 @@ def perturb(x, e):
     return 
 
 def f(x):
-    return np.exp(-x**2)
+    return np.exp(-x ** 2)
 
 x_otimo = np.random.uniform(low=-2, high=2)
 f_otimo = f(x_otimo)
