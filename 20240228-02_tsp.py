@@ -1,8 +1,10 @@
+# Traveling Salesman Problem 2
+
 import numpy as np
 import matplotlib.pyplot as plt
 
 def perturb(x, e):
-    return 
+    return x
 
 def f(x):
     return np.exp(-x ** 2)
