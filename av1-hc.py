@@ -2,16 +2,16 @@ import numpy as np
 import pandas as pds
 import matplotlib.pyplot as plt
 
-def perturb(x, e, dominio):
+def perturb(x, e, limites):
     res = np.random.uniform(low=x-e, high=x+e, size=(2, ))
-    if res[0] < dominio[0][0]:
-        res[0] = dominio[0][0]
-    elif res[0] > dominio[0][1]:
-        res[0] = dominio[0][1]
-    if res[1] < dominio[1][0]:
-        res[1] = dominio[1][0]
-    elif res[1] > dominio[1][1]:
-        res[1] = dominio[1][1]
+    if res[0] < limites[0][0]:
+        res[0] = limites[0][0]
+    elif res[0] > limites[0][1]:
+        res[0] = limites[0][1]
+    if res[1] < limites[1][0]:
+        res[1] = limites[1][0]
+    elif res[1] > limites[1][1]:
+        res[1] = limites[1][1]
     return res
 
 def f(x1, x2):
@@ -34,29 +34,29 @@ def f(x1, x2):
 
 # Domínio da função
 # Problema 1
-# dom = [(-100, 100), (-100, 100)]
+# dominio = [(-100, 100), (-100, 100)]
 # Problema 2
-# dom = [(-2, 4), (-2, 5)]
+# dominio = [(-2, 4), (-2, 5)]
 # Problema 3
-# dom = [(-8, 8), (-8, 8)]
+# dominio = [(-8, 8), (-8, 8)]
 # Problema 4
-# dom = [(-5.12, 5.12), (-5.12, 5.12)]
+# dominio = [(-5.12, 5.12), (-5.12, 5.12)]
 # Problema 5
-# dom = [(-10, 10), (-10, 10)]
+# dominio = [(-10, 10), (-10, 10)]
 # Problema 6
-# dom = [(-1, 3), (-1, 3)]
+# dominio = [(-1, 3), (-1, 3)]
 # Problema 7
-# dom = [(0, np.pi), (0, np.pi)]
+# dominio = [(0, np.pi), (0, np.pi)]
 # Problema 8
-dom = [(-200, 20), (-200, 20)]
+dominio = [(-200, 20), (-200, 20)]
 
 # Geração do grid da função
-x = np.linspace(start=[dom[0][0], dom[1][0]], stop=[dom[0][1], dom[1][1]], num=1000, axis=1)
+x = np.linspace(start=[dominio[0][0], dominio[1][0]], stop=[dominio[0][1], dominio[1][1]], num=1000, axis=1)
 X1, X2 = np.meshgrid(x[0], x[1])
 Y = f(X1, X2)
 
 # Geração do ponto inicial
-x_otimo = np.random.uniform(low=[dom[0][0], dom[1][0]], high=[dom[0][1], dom[1][1]], size=(2, ))
+x_otimo = np.random.uniform(low=[dominio[0][0], dominio[1][0]], high=[dominio[0][1], dominio[1][1]], size=(2, ))
 f_otimo = f(x_otimo[0], x_otimo[1])
 
 # Desenho do gráfico e do ponto inicial
@@ -99,7 +99,7 @@ melhoria = True
 while i < max_iter and melhoria:
     melhoria = False
     for j in range(max_vizinhos):
-        x_cand = perturb(x_otimo, e, dom)
+        x_cand = perturb(x_otimo, e, dominio)
         f_cand = f(x_cand[0], x_cand[1])
         if(f_cand < f_otimo):
             melhoria = True
