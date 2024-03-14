@@ -1,12 +1,22 @@
 import numpy as np
+import pandas as pds
 import matplotlib.pyplot as plt
 
-def perturb(x, e):
-    return np.random.uniform(low=x-e, high=x+e)
+def perturb(x, e, dominio):
+    res = np.random.uniform(low=x-e, high=x+e, size=(2, ))
+    if res[0] < dominio[0][0]:
+        res[0] = dominio[0][0]
+    elif res[0] > dominio[0][1]:
+        res[0] = dominio[0][1]
+    if res[1] < dominio[1][0]:
+        res[1] = dominio[1][0]
+    elif res[1] > dominio[1][1]:
+        res[1] = dominio[1][1]
+    return res
 
 def f(x1, x2):
     # Problema 1 (mínimo)
-    return (x1 ** 2 + x2 ** 2)
+    # return (x1 ** 2 + x2 ** 2)
     # Problema 2 (máximo)
     # return (np.exp(-(x1 ** 2 + x2 ** 2)) + 2 * np.exp(-((x1 - 1.7) ** 2 + (x2 - 1.7) ** 2)))
     # Problema 3 (mínimo)
@@ -20,60 +30,49 @@ def f(x1, x2):
     # Problema 7 (mínimo)
     # return ((-np.sin(x1) * np.sin((x1 ** 2)/np.pi) ** (2 * 10)) - (np.sin(x2) * (np.sin((2 * x2 ** 2)/np.pi) ** (2 * 10))))
     # Problema 8 (mínimo)
-    # return ((-(x2 + 47)) * np.sin(np.sqrt(np.abs((x1 / 2) + (x2 + 47))))) - (x1 * np.sin(np.sqrt(np.abs(x1 - (x2 + 47)))))
+    return ((-(x2 + 47)) * np.sin(np.sqrt(np.abs((x1 / 2) + (x2 + 47))))) - (x1 * np.sin(np.sqrt(np.abs(x1 - (x2 + 47)))))
 
+# Domínio da função
 # Problema 1
-x = np.linspace(-100, 100, 1000)
+# dom = [(-100, 100), (-100, 100)]
 # Problema 2
-# x = np.linspace(start=[-2, -2], stop=[4, 5], num=1000, axis=1)
+# dom = [(-2, 4), (-2, 5)]
 # Problema 3
-# x = np.linspace(-8, 8, 1000)
+# dom = [(-8, 8), (-8, 8)]
 # Problema 4
-# x = np.linspace(-5.12, 5.12, 1000)
+# dom = [(-5.12, 5.12), (-5.12, 5.12)]
 # Problema 5
-# x = np.linspace(-10, 10, 1000)
+# dom = [(-10, 10), (-10, 10)]
 # Problema 6
-# x = np.linspace(-1, 3, 1000)
+# dom = [(-1, 3), (-1, 3)]
 # Problema 7
-# x = np.linspace(0, np.pi, 1000)
+# dom = [(0, np.pi), (0, np.pi)]
 # Problema 8
-# x = np.linspace(-200, 20, 1000)
+dom = [(-200, 20), (-200, 20)]
 
-# Problemas 1, 3, 4, 5, 6, 7, 8
-X1, X2 = np.meshgrid(x, x)
-# Problema 2
-# X1, X2 = np.meshgrid(x[0], x[1])
+# Geração do grid da função
+x = np.linspace(start=[dom[0][0], dom[1][0]], stop=[dom[0][1], dom[1][1]], num=1000, axis=1)
+X1, X2 = np.meshgrid(x[0], x[1])
 Y = f(X1, X2)
 
-# Problema 1
-x_otimo = np.random.uniform(-100, 100, size=(2, ))
-# Problema 2
-# x_otimo = np.random.uniform(low=[-2, -2], high=[4, 5], size=(2, ))
-# Problema 3
-# x_otimo = np.random.uniform(-8, 8, size=(2, ))
-# Problema 4
-# x_otimo = np.random.uniform(-5.12, -5.12, size=(2, ))
-# Problema 5
-# x_otimo = np.random.uniform(-10, 10, size=(2, ))
-# Problema 6
-# x_otimo = np.random.uniform(-1, 3, size=(2, ))
-# Problema 7
-# x_otimo = np.random.uniform(0, np.pi, size=(2, ))
-# Problema 8
-# x_otimo = np.random.uniform(-200, 20, size=(2, ))
+# Geração do ponto inicial
+x_otimo = np.random.uniform(low=[dom[0][0], dom[1][0]], high=[dom[0][1], dom[1][1]], size=(2, ))
 f_otimo = f(x_otimo[0], x_otimo[1])
 
+# Desenho do gráfico e do ponto inicial
 fig = plt.figure()
 ax = fig.add_subplot(projection='3d')
 surface = ax.plot_surface(X1, X2, Y, rstride=10, cstride=10, alpha=0.6, cmap='jet')
 ax.scatter(x_otimo[0], x_otimo[1], f_otimo, marker='x', s=90, linewidth=2, color='red')
 
+# Etiquetas dos eixos
 ax.set_xlabel('valores x')
 ax.set_ylabel('valores y')
 ax.set_zlabel('valores z')
 ax.set_title('f(x1, x2)')
+
 # Problema 1
-ax.view_init(elev=10., azim=-65., roll=0.)
+# ax.view_init(elev=10., azim=-65., roll=0.)
 # Problema 2
 # ax.view_init(elev=24., azim=-66., roll=0.)
 # Problema 3
@@ -87,7 +86,7 @@ ax.view_init(elev=10., azim=-65., roll=0.)
 # Problema 7
 # ax.view_init(elev=26., azim=-65., roll=0.)
 # Problema 8
-# ax.view_init(elev=30., azim=160., roll=0.)
+ax.view_init(elev=30., azim=160., roll=0.)
 plt.colorbar(surface)
 plt.tight_layout()
 
@@ -100,7 +99,7 @@ melhoria = True
 while i < max_iter and melhoria:
     melhoria = False
     for j in range(max_vizinhos):
-        x_cand = perturb(x_otimo, e)
+        x_cand = perturb(x_otimo, e, dom)
         f_cand = f(x_cand[0], x_cand[1])
         if(f_cand < f_otimo):
             melhoria = True
