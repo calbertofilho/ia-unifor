@@ -1,9 +1,15 @@
 import numpy as np
-import pandas as pds
+import pandas as pd
 import matplotlib.pyplot as plt
 
+# Hiperparâmetros:
+#
+# Pt.inicial  limite inferior do domínio de x.
+# Candidato   |x_otimo - x_cand| ≤ ε    # x_cand  ́e um possível candidato da vizinhanca
+                                        # ε = 0,1
+
 def perturb(x, e, limites):
-    res = np.random.uniform(low=x-e, high=x+e, size=(2, ))
+    res = np.random.uniform(low=x[0]-e, high=x[1]+e, size=(2, ))
     if res[0] < limites[0][0]:
         res[0] = limites[0][0]
     elif res[0] > limites[0][1]:
@@ -14,33 +20,15 @@ def perturb(x, e, limites):
         res[1] = limites[1][1]
     return res
 
-def f(x1, x2):
-    # Problema 1 (mínimo)
-    # return (x1 ** 2 + x2 ** 2)
-    # Problema 2 (máximo)
-    return (np.exp(-(x1 ** 2 + x2 ** 2)) + 2 * np.exp(-((x1 - 1.7) ** 2 + (x2 - 1.7) ** 2)))
-    # Problema 3 (mínimo)
-    # return (-20 * np.exp(-0.2 * np.sqrt(0.5 * (x1 ** 2 + x2 ** 2)))) - np.exp(0.5 * (np.cos(2 * np.pi * x1) + np.cos(2 * np.pi * x2))) + 20 + np.exp(1)
-    # Problema 4 (mínimo)
-    # return ((x1 ** 2 - 10 * np.cos(2 * np.pi * x1) + 10) + (x2 ** 2 - 10 * np.cos(2 * np.pi * x2) + 10))
-    # Problema 5 (máximo)
-    # return (((x1 * np.cos(x1)) / 20) + 2 * np.exp(-(x1 ** 2) - ((x2 - 1) ** 2)) + 0.01 * x1 * x2)
-    # Problema 6 (máximo)
-    # return ((x1 * np.sin(4 * np.pi * x1)) - (x2 * np.sin((4 * np.pi * x2) + np.pi)) + 1)
-    # Problema 7 (mínimo)
-    # return ((-np.sin(x1) * np.sin((x1 ** 2)/np.pi) ** (2 * 10)) - (np.sin(x2) * (np.sin((2 * x2 ** 2)/np.pi) ** (2 * 10))))
-    # Problema 8 (mínimo)
-    # return ((-(x2 + 47)) * np.sin(np.sqrt(np.abs((x1 / 2) + (x2 + 47))))) - (x1 * np.sin(np.sqrt(np.abs(x1 - (x2 + 47)))))
-
 # Domínio da função
 # Problema 1
 # dominio = [(-100, 100), (-100, 100)]
 # Problema 2
-dominio = [(-2, 4), (-2, 5)]
+# dominio = [(-2, 4), (-2, 5)]
 # Problema 3
 # dominio = [(-8, 8), (-8, 8)]
 # Problema 4
-# dominio = [(-5.12, 5.12), (-5.12, 5.12)]
+dominio = [(-5.12, 5.12), (-5.12, 5.12)]
 # Problema 5
 # dominio = [(-10, 10), (-10, 10)]
 # Problema 6
@@ -50,13 +38,31 @@ dominio = [(-2, 4), (-2, 5)]
 # Problema 8
 # dominio = [(-200, 20), (-200, 20)]
 
+def f(x1, x2):
+    # Problema 1 (Minimizar)
+    # return (x1 ** 2 + x2 ** 2)
+    # Problema 2 (Maximizar)
+    # return (np.exp(-(x1 ** 2 + x2 ** 2)) + 2 * np.exp(-((x1 - 1.7) ** 2 + (x2 - 1.7) ** 2)))
+    # Problema 3 (Minimizar)
+    # return (-20 * np.exp(-0.2 * np.sqrt(0.5 * (x1 ** 2 + x2 ** 2)))) - np.exp(0.5 * (np.cos(2 * np.pi * x1) + np.cos(2 * np.pi * x2))) + 20 + np.exp(1)
+    # Problema 4 (Minimizar)
+    return ((x1 ** 2 - 10 * np.cos(2 * np.pi * x1) + 10) + (x2 ** 2 - 10 * np.cos(2 * np.pi * x2) + 10))
+    # Problema 5 (Maximizar)
+    # return (((x1 * np.cos(x1)) / 20) + 2 * np.exp(-(x1 ** 2) - ((x2 - 1) ** 2)) + 0.01 * x1 * x2)
+    # Problema 6 (Maximizar)
+    # return ((x1 * np.sin(4 * np.pi * x1)) - (x2 * np.sin((4 * np.pi * x2) + np.pi)) + 1)
+    # Problema 7 (Minimizar)
+    # return ((-np.sin(x1) * np.sin((x1 ** 2)/np.pi) ** (2 * 10)) - (np.sin(x2) * (np.sin((2 * x2 ** 2)/np.pi) ** (2 * 10))))
+    # Problema 8 (Minimizar)
+    # return ((-(x2 + 47)) * np.sin(np.sqrt(np.abs((x1 / 2) + (x2 + 47))))) - (x1 * np.sin(np.sqrt(np.abs(x1 - (x2 + 47)))))
+
 # Geração do grid e gráfico da função
 x = np.linspace(start=[dominio[0][0], dominio[1][0]], stop=[dominio[0][1], dominio[1][1]], num=1000, axis=1)
 X1, X2 = np.meshgrid(x[0], x[1])
 Y = f(X1, X2)
 
 # Geração do ponto inicial no gráfico
-x_otimo = np.random.uniform(low=[dominio[0][0], dominio[1][0]], high=[dominio[0][1], dominio[1][1]], size=(2, ))
+x_otimo = (dominio[0][0], dominio[1][0])
 f_otimo = f(x_otimo[0], x_otimo[1])
 
 # Plotagem do desenho do gráfico e do ponto inicial
@@ -64,7 +70,7 @@ fig = plt.figure()
 ax = fig.add_subplot(projection='3d')
 surface = ax.plot_surface(X1, X2, Y, rstride=10, cstride=10, alpha=0.6, cmap='jet')
 ax.scatter(x_otimo[0], x_otimo[1], f_otimo, marker='x', s=90, linewidth=2, color='red')
-plt.colorbar(surface)
+# plt.colorbar(surface)
 
 # Etiquetas dos eixos
 ax.set_title('f(x1, x2)')
@@ -77,11 +83,11 @@ plt.tight_layout()  # Melhor ajuste para a imagem plotada
 # Problema 1
 # ax.view_init(elev=10., azim=-65., roll=0.)
 # Problema 2
-ax.view_init(elev=24., azim=-66., roll=0.)
+# ax.view_init(elev=24., azim=-66., roll=0.)
 # Problema 3
 # ax.view_init(elev=30., azim=-65., roll=0.)
 # Problema 4
-# ax.view_init(elev=25., azim=-61., roll=0.)
+ax.view_init(elev=25., azim=-61., roll=0.)
 # Problema 5
 # ax.view_init(elev=15., azim=-140., roll=0.)
 # Problema 6
@@ -91,30 +97,35 @@ ax.view_init(elev=24., azim=-66., roll=0.)
 # Problema 8
 # ax.view_init(elev=30., azim=160., roll=0.)
 
-# Algoritmo da busca por Hill Climbing
-e = 0.1
-max_iter = 1000
-max_vizinhos = 30
-i = 0
-melhoria = True
+solucoes = []
+for z in range(100):
+    # Algoritmo da busca por Hill Climbing
+    e = 0.1
+    max_iter = 10000
+    max_vizinhos = 20
+    i = 0
+    melhoria = True
 
-while i < max_iter and melhoria:
-    melhoria = False
-    for j in range(max_vizinhos):
-        x_cand = perturb(x_otimo, e, dominio)
-        f_cand = f(x_cand[0], x_cand[1])
-        # Minimizar
-        # if(f_cand < f_otimo):
-        # Maximizar
-        if(f_cand > f_otimo):
-            melhoria = True
-            x_otimo = x_cand
-            f_otimo = f_cand
-#            ax.scatter(x_otimo[0], x_otimo[1], f_otimo, marker='x', s=20, linewidth=2, color='k')
-            break
-    i+=1
+    while i < max_iter and melhoria:
+        melhoria = False
+        for j in range(max_vizinhos):
+            x_cand = perturb(x_otimo, e, dominio)
+            f_cand = f(x_cand[0], x_cand[1])
+            # Minimizar
+            if (f_cand < f_otimo):
+            # Maximizar
+            # if (f_cand > f_otimo):
+                melhoria = True
+                x_otimo = x_cand
+                f_otimo = f_cand
+                break
+        i+=1
+    solucoes.append([z+1, x_otimo[0], x_otimo[1], f_otimo])
 
-ax.text(x_otimo[0], x_otimo[1], f_otimo, "x = "+"{:.4f}".format(x_otimo[0])+"\ny = "+"{:.4f}".format(x_otimo[1])+"\nz = "+"{:.4f}".format(f_otimo), color='red')
+for z in range(100):
+    print(solucoes[z])
+
+# Plotagem no desenho do gráfico do ponto ótimo
 ax.scatter(x_otimo[0], x_otimo[1], f_otimo, marker='x', s=90, linewidth=2, color='green')
 
 # Problema 1

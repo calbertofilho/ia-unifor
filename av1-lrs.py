@@ -18,7 +18,7 @@ def f(x1, x2):
     # Problema 1 (mínimo)
     # return (x1 ** 2 + x2 ** 2)
     # Problema 2 (máximo)
-    return (np.exp(-(x1 ** 2 + x2 ** 2)) + 2 * np.exp(-((x1 - 1.7) ** 2 + (x2 - 1.7) ** 2)))
+    # return (np.exp(-(x1 ** 2 + x2 ** 2)) + 2 * np.exp(-((x1 - 1.7) ** 2 + (x2 - 1.7) ** 2)))
     # Problema 3 (mínimo)
     # return (-20 * np.exp(-0.2 * np.sqrt(0.5 * (x1 ** 2 + x2 ** 2)))) - np.exp(0.5 * (np.cos(2 * np.pi * x1) + np.cos(2 * np.pi * x2))) + 20 + np.exp(1)
     # Problema 4 (mínimo)
@@ -30,13 +30,13 @@ def f(x1, x2):
     # Problema 7 (mínimo)
     # return ((-np.sin(x1) * np.sin((x1 ** 2)/np.pi) ** (2 * 10)) - (np.sin(x2) * (np.sin((2 * x2 ** 2)/np.pi) ** (2 * 10))))
     # Problema 8 (mínimo)
-    # return ((-(x2 + 47)) * np.sin(np.sqrt(np.abs((x1 / 2) + (x2 + 47))))) - (x1 * np.sin(np.sqrt(np.abs(x1 - (x2 + 47)))))
+    return ((-(x2 + 47)) * np.sin(np.sqrt(np.abs((x1 / 2) + (x2 + 47))))) - (x1 * np.sin(np.sqrt(np.abs(x1 - (x2 + 47)))))
 
 # Domínio da função
 # Problema 1
 # dominio = [(-100, 100), (-100, 100)]
 # Problema 2
-dominio = [(-2, 4), (-2, 5)]
+# dominio = [(-2, 4), (-2, 5)]
 # Problema 3
 # dominio = [(-8, 8), (-8, 8)]
 # Problema 4
@@ -48,7 +48,7 @@ dominio = [(-2, 4), (-2, 5)]
 # Problema 7
 # dominio = [(0, np.pi), (0, np.pi)]
 # Problema 8
-# dominio = [(-200, 20), (-200, 20)]
+dominio = [(-200, 20), (-200, 20)]
 
 # Geração do grid e gráfico da função
 x = np.linspace(start=[dominio[0][0], dominio[1][0]], stop=[dominio[0][1], dominio[1][1]], num=1000, axis=1)
@@ -77,7 +77,7 @@ plt.tight_layout()  # Melhor ajuste para a imagem plotada
 # Problema 1
 # ax.view_init(elev=10., azim=-65., roll=0.)
 # Problema 2
-ax.view_init(elev=24., azim=-66., roll=0.)
+# ax.view_init(elev=24., azim=-66., roll=0.)
 # Problema 3
 # ax.view_init(elev=30., azim=-65., roll=0.)
 # Problema 4
@@ -89,7 +89,7 @@ ax.view_init(elev=24., azim=-66., roll=0.)
 # Problema 7
 # ax.view_init(elev=26., azim=-65., roll=0.)
 # Problema 8
-# ax.view_init(elev=30., azim=160., roll=0.)
+ax.view_init(elev=30., azim=160., roll=0.)
 
 # Algoritmo da busca por Hill Climbing
 e = 0.1
@@ -103,10 +103,7 @@ while i < max_iter and melhoria:
     for j in range(max_vizinhos):
         x_cand = perturb(x_otimo, e, dominio)
         f_cand = f(x_cand[0], x_cand[1])
-        # Minimizar
-        # if(f_cand < f_otimo):
-        # Maximizar
-        if(f_cand > f_otimo):
+        if(f_cand < f_otimo):
             melhoria = True
             x_otimo = x_cand
             f_otimo = f_cand
