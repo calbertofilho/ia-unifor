@@ -68,17 +68,21 @@ def perturb_grs(x, limites):
         res[1] = limites[1][1]
     return res
 
-def otimizar(tipo, busca, f, dominio, x_otimo, abert, max_it, max_viz, pos, salvar):
+def otimizar(tipo, busca, f, dominio, x_inicial, abert, max_it, max_viz, pos, salvar):
     # Criação do DataFrame vazio que armazenará as soluções de cada rodada
     solucoes = pd.DataFrame(columns = ['pt_otimo[x]', 'pt_otimo[y]', 'f(otimo)'])
+
+    # Geração do ponto inicial
+    x_otimo = x_inicial
+    f_melhor = f_otimo = f(x_otimo[0], x_otimo[1])
+
+    # Adição do ponto inicial no DataFrame de soluções
+    solucoes.loc[0] = [x_otimo[0], x_otimo[1], f_otimo]
 
     # Geração do grid e gráfico da função
     x = np.linspace(start=[dominio[0][0], dominio[1][0]], stop=[dominio[0][1], dominio[1][1]], num=1000, axis=1)
     X1, X2 = np.meshgrid(x[0], x[1])
     Y = f(X1, X2)
-
-    # Geração do ponto inicial no gráfico
-    f_melhor = f_otimo = f(x_otimo[0], x_otimo[1])
 
     # Plotagem do desenho do gráfico e do ponto inicial
     fig = plt.figure()
@@ -94,15 +98,12 @@ def otimizar(tipo, busca, f, dominio, x_otimo, abert, max_it, max_viz, pos, salv
     ax.set_zlabel('valores z')
     plt.tight_layout()  # Melhora o ajuste para a imagem a ser plotada
 
-    # Adição do ponto de partida no DataFrame de soluções
-    solucoes.loc[0] = [x_otimo[0], x_otimo[1], f_otimo]
-
     # Define o tipo de teste que deve ser feito, para maximiar ou minimizar a função
-    def teste(candidato, otimo):
+    def teste(candidato, atual):
         if (tipo == 'min'): # Minimizar
-            return (candidato < otimo)
+            return (candidato < atual)
         elif (tipo == 'max'): # Maximizar
-            return (candidato > otimo)
+            return (candidato > atual)
 
     for z in range(100):
         # Algoritmo da busca por Hill Climbing
@@ -188,20 +189,20 @@ def otimizar(tipo, busca, f, dominio, x_otimo, abert, max_it, max_viz, pos, salv
     plt.show()
 
 if __name__ == '__main__':
-    otimizar(tipo=tipo1, busca='hc', f=funcao1, dominio=limite1, x_otimo=(limite1[0][0], limite1[1][0]), abert=0.10, max_it=1000, max_viz=30, pos='view1', salvar=False)
-    otimizar(tipo=tipo2, busca='hc', f=funcao2, dominio=limite2, x_otimo=(limite2[0][0], limite2[1][0]), abert=0.10, max_it=1000, max_viz=30, pos='view2', salvar=False)
-    otimizar(tipo=tipo3, busca='hc', f=funcao3, dominio=limite3, x_otimo=(limite3[0][0], limite3[1][0]), abert=0.10, max_it=1000, max_viz=30, pos='view3', salvar=False)
-    otimizar(tipo=tipo4, busca='hc', f=funcao4, dominio=limite4, x_otimo=(limite4[0][0], limite4[1][0]), abert=0.10, max_it=1000, max_viz=30, pos='view4', salvar=False)
-    otimizar(tipo=tipo5, busca='hc', f=funcao5, dominio=limite5, x_otimo=(limite5[0][0], limite5[1][0]), abert=0.10, max_it=1000, max_viz=30, pos='view5', salvar=False)
-    otimizar(tipo=tipo6, busca='hc', f=funcao6, dominio=limite6, x_otimo=(limite6[0][0], limite6[1][0]), abert=1.40, max_it=1000, max_viz=30, pos='view6', salvar=False)
-    otimizar(tipo=tipo7, busca='hc', f=funcao7, dominio=limite7, x_otimo=(limite7[0][0], limite7[1][0]), abert=0.54, max_it=1000, max_viz=30, pos='view7', salvar=False)
-    otimizar(tipo=tipo8, busca='hc', f=funcao8, dominio=limite8, x_otimo=(limite8[0][0], limite8[1][0]), abert=0.10, max_it=1000, max_viz=30, pos='view8', salvar=False)
+    otimizar(tipo=tipo1, busca='hc', f=funcao1, dominio=limite1, x_inicial=(limite1[0][0], limite1[1][0]), abert=0.10, max_it=1000, max_viz=30, pos='view1', salvar=False)
+    otimizar(tipo=tipo2, busca='hc', f=funcao2, dominio=limite2, x_inicial=(limite2[0][0], limite2[1][0]), abert=0.10, max_it=1000, max_viz=30, pos='view2', salvar=False)
+    otimizar(tipo=tipo3, busca='hc', f=funcao3, dominio=limite3, x_inicial=(limite3[0][0], limite3[1][0]), abert=0.10, max_it=1000, max_viz=30, pos='view3', salvar=False)
+    otimizar(tipo=tipo4, busca='hc', f=funcao4, dominio=limite4, x_inicial=(limite4[0][0], limite4[1][0]), abert=0.10, max_it=1000, max_viz=30, pos='view4', salvar=False)
+    otimizar(tipo=tipo5, busca='hc', f=funcao5, dominio=limite5, x_inicial=(limite5[0][0], limite5[1][0]), abert=0.10, max_it=1000, max_viz=30, pos='view5', salvar=False)
+    otimizar(tipo=tipo6, busca='hc', f=funcao6, dominio=limite6, x_inicial=(limite6[0][0], limite6[1][0]), abert=1.40, max_it=1000, max_viz=30, pos='view6', salvar=False)
+    otimizar(tipo=tipo7, busca='hc', f=funcao7, dominio=limite7, x_inicial=(limite7[0][0], limite7[1][0]), abert=0.54, max_it=1000, max_viz=30, pos='view7', salvar=False)
+    otimizar(tipo=tipo8, busca='hc', f=funcao8, dominio=limite8, x_inicial=(limite8[0][0], limite8[1][0]), abert=0.10, max_it=1000, max_viz=30, pos='view8', salvar=False)
 
-    otimizar(tipo=tipo1, busca='grs', f=funcao1, dominio=limite1, x_otimo=np.random.uniform(low=(limite1[0][0], limite1[1][0]), high=(limite1[0][1], limite1[1][1]), size=(2, )), abert=0, max_it=1000, max_viz=0, pos='view1', salvar=False)
-    otimizar(tipo=tipo2, busca='grs', f=funcao2, dominio=limite2, x_otimo=np.random.uniform(low=(limite2[0][0], limite2[1][0]), high=(limite2[0][1], limite2[1][1]), size=(2, )), abert=0, max_it=1000, max_viz=0, pos='view2', salvar=False)
-    otimizar(tipo=tipo3, busca='grs', f=funcao3, dominio=limite3, x_otimo=np.random.uniform(low=(limite3[0][0], limite3[1][0]), high=(limite3[0][1], limite3[1][1]), size=(2, )), abert=0, max_it=1000, max_viz=0, pos='view3', salvar=False)
-    otimizar(tipo=tipo4, busca='grs', f=funcao4, dominio=limite4, x_otimo=np.random.uniform(low=(limite4[0][0], limite4[1][0]), high=(limite4[0][1], limite4[1][1]), size=(2, )), abert=0, max_it=1000, max_viz=0, pos='view4', salvar=False)
-    otimizar(tipo=tipo5, busca='grs', f=funcao5, dominio=limite5, x_otimo=np.random.uniform(low=(limite5[0][0], limite5[1][0]), high=(limite5[0][1], limite5[1][1]), size=(2, )), abert=0, max_it=1000, max_viz=0, pos='view5', salvar=False)
-    otimizar(tipo=tipo6, busca='grs', f=funcao6, dominio=limite6, x_otimo=np.random.uniform(low=(limite6[0][0], limite6[1][0]), high=(limite6[0][1], limite6[1][1]), size=(2, )), abert=0, max_it=1000, max_viz=0, pos='view6', salvar=False)
-    otimizar(tipo=tipo7, busca='grs', f=funcao7, dominio=limite7, x_otimo=np.random.uniform(low=(limite7[0][0], limite7[1][0]), high=(limite7[0][1], limite7[1][1]), size=(2, )), abert=0, max_it=1000, max_viz=0, pos='view7', salvar=False)
-    otimizar(tipo=tipo8, busca='grs', f=funcao8, dominio=limite8, x_otimo=np.random.uniform(low=(limite8[0][0], limite8[1][0]), high=(limite8[0][1], limite8[1][1]), size=(2, )), abert=0, max_it=1000, max_viz=0, pos='view8', salvar=False)
+    otimizar(tipo=tipo1, busca='grs', f=funcao1, dominio=limite1, x_inicial=np.random.uniform(low=(limite1[0][0], limite1[1][0]), high=(limite1[0][1], limite1[1][1]), size=(2, )), abert=0, max_it=1000, max_viz=0, pos='view1', salvar=False)
+    otimizar(tipo=tipo2, busca='grs', f=funcao2, dominio=limite2, x_inicial=np.random.uniform(low=(limite2[0][0], limite2[1][0]), high=(limite2[0][1], limite2[1][1]), size=(2, )), abert=0, max_it=1000, max_viz=0, pos='view2', salvar=False)
+    otimizar(tipo=tipo3, busca='grs', f=funcao3, dominio=limite3, x_inicial=np.random.uniform(low=(limite3[0][0], limite3[1][0]), high=(limite3[0][1], limite3[1][1]), size=(2, )), abert=0, max_it=1000, max_viz=0, pos='view3', salvar=False)
+    otimizar(tipo=tipo4, busca='grs', f=funcao4, dominio=limite4, x_inicial=np.random.uniform(low=(limite4[0][0], limite4[1][0]), high=(limite4[0][1], limite4[1][1]), size=(2, )), abert=0, max_it=1000, max_viz=0, pos='view4', salvar=False)
+    otimizar(tipo=tipo5, busca='grs', f=funcao5, dominio=limite5, x_inicial=np.random.uniform(low=(limite5[0][0], limite5[1][0]), high=(limite5[0][1], limite5[1][1]), size=(2, )), abert=0, max_it=1000, max_viz=0, pos='view5', salvar=False)
+    otimizar(tipo=tipo6, busca='grs', f=funcao6, dominio=limite6, x_inicial=np.random.uniform(low=(limite6[0][0], limite6[1][0]), high=(limite6[0][1], limite6[1][1]), size=(2, )), abert=0, max_it=1000, max_viz=0, pos='view6', salvar=False)
+    otimizar(tipo=tipo7, busca='grs', f=funcao7, dominio=limite7, x_inicial=np.random.uniform(low=(limite7[0][0], limite7[1][0]), high=(limite7[0][1], limite7[1][1]), size=(2, )), abert=0, max_it=1000, max_viz=0, pos='view7', salvar=False)
+    otimizar(tipo=tipo8, busca='grs', f=funcao8, dominio=limite8, x_inicial=np.random.uniform(low=(limite8[0][0], limite8[1][0]), high=(limite8[0][1], limite8[1][1]), size=(2, )), abert=0, max_it=1000, max_viz=0, pos='view8', salvar=False)
