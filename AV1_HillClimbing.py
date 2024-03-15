@@ -22,13 +22,13 @@ def perturb(x, e, limites):
 
 # Domínio da função
 # Problema 1
-# dominio = [(-100, 100), (-100, 100)]
+dominio = [(-100, 100), (-100, 100)]
 # Problema 2
 # dominio = [(-2, 4), (-2, 5)]
 # Problema 3
 # dominio = [(-8, 8), (-8, 8)]
 # Problema 4
-dominio = [(-5.12, 5.12), (-5.12, 5.12)]
+# dominio = [(-5.12, 5.12), (-5.12, 5.12)]
 # Problema 5
 # dominio = [(-10, 10), (-10, 10)]
 # Problema 6
@@ -40,13 +40,13 @@ dominio = [(-5.12, 5.12), (-5.12, 5.12)]
 
 def f(x1, x2):
     # Problema 1 (Minimizar)
-    # return (x1 ** 2 + x2 ** 2)
+    return (x1 ** 2 + x2 ** 2)
     # Problema 2 (Maximizar)
     # return (np.exp(-(x1 ** 2 + x2 ** 2)) + 2 * np.exp(-((x1 - 1.7) ** 2 + (x2 - 1.7) ** 2)))
     # Problema 3 (Minimizar)
     # return (-20 * np.exp(-0.2 * np.sqrt(0.5 * (x1 ** 2 + x2 ** 2)))) - np.exp(0.5 * (np.cos(2 * np.pi * x1) + np.cos(2 * np.pi * x2))) + 20 + np.exp(1)
     # Problema 4 (Minimizar)
-    return ((x1 ** 2 - 10 * np.cos(2 * np.pi * x1) + 10) + (x2 ** 2 - 10 * np.cos(2 * np.pi * x2) + 10))
+    # return ((x1 ** 2 - 10 * np.cos(2 * np.pi * x1) + 10) + (x2 ** 2 - 10 * np.cos(2 * np.pi * x2) + 10))
     # Problema 5 (Maximizar)
     # return (((x1 * np.cos(x1)) / 20) + 2 * np.exp(-(x1 ** 2) - ((x2 - 1) ** 2)) + 0.01 * x1 * x2)
     # Problema 6 (Maximizar)
@@ -54,7 +54,7 @@ def f(x1, x2):
     # Problema 7 (Minimizar)
     # return ((-np.sin(x1) * np.sin((x1 ** 2)/np.pi) ** (2 * 10)) - (np.sin(x2) * (np.sin((2 * x2 ** 2)/np.pi) ** (2 * 10))))
     # Problema 8 (Minimizar)
-    # return ((-(x2 + 47)) * np.sin(np.sqrt(np.abs((x1 / 2) + (x2 + 47))))) - (x1 * np.sin(np.sqrt(np.abs(x1 - (x2 + 47)))))
+    return ((-(x2 + 47)) * np.sin(np.sqrt(np.abs((x1 / 2) + (x2 + 47))))) - (x1 * np.sin(np.sqrt(np.abs(x1 - (x2 + 47)))))
 
 # Geração do grid e gráfico da função
 x = np.linspace(start=[dominio[0][0], dominio[1][0]], stop=[dominio[0][1], dominio[1][1]], num=1000, axis=1)
@@ -81,13 +81,13 @@ plt.tight_layout()  # Melhor ajuste para a imagem plotada
 
 # Posicionamento da camera de visualização 3d
 # Problema 1
-# ax.view_init(elev=10., azim=-65., roll=0.)
+ax.view_init(elev=10., azim=-65., roll=0.)
 # Problema 2
 # ax.view_init(elev=24., azim=-66., roll=0.)
 # Problema 3
 # ax.view_init(elev=30., azim=-65., roll=0.)
 # Problema 4
-ax.view_init(elev=25., azim=-61., roll=0.)
+# ax.view_init(elev=25., azim=-61., roll=0.)
 # Problema 5
 # ax.view_init(elev=15., azim=-140., roll=0.)
 # Problema 6
@@ -97,12 +97,13 @@ ax.view_init(elev=25., azim=-61., roll=0.)
 # Problema 8
 # ax.view_init(elev=30., azim=160., roll=0.)
 
-solucoes = []
+# Criação do DataFrame vazio que armazenará as soluções de cada rodada
+solucoes = pd.DataFrame(columns = ['x_otimo[0]', 'x_otimo[1]', 'f_otimo'])
 for z in range(100):
     # Algoritmo da busca por Hill Climbing
     e = 0.1
     max_iter = 10000
-    max_vizinhos = 20
+    max_vizinhos = 30
     i = 0
     melhoria = True
 
@@ -120,29 +121,30 @@ for z in range(100):
                 f_otimo = f_cand
                 break
         i+=1
-    solucoes.append([z+1, x_otimo[0], x_otimo[1], f_otimo])
+    # Adição da solução encontrada nesta rodada no DataFrame de soluções
+    solucoes.loc[z+1] = [x_otimo[0], x_otimo[1], f_otimo]
 
-for z in range(100):
-    print(solucoes[z])
+# Plotagem do gráfico no melhor ponto ótimo
+ax.scatter(x_otimo[0], x_otimo[1], f_otimo, marker='o', s=50, linewidth=1, color='green', edgecolors='black')
 
-# Plotagem no desenho do gráfico do ponto ótimo
-ax.scatter(x_otimo[0], x_otimo[1], f_otimo, marker='x', s=90, linewidth=2, color='green')
-
+# Gerando os arquivos com as soluções encontrados (Imagem (PNG) do gráfico com apresentação do ponto inicial e o ponto ótimo e do DataFrame (CSV) de soluções da sequência de 100 rodadas)
 # Problema 1
-# plt.savefig('av1-problema1-funcao1.png')
+nome_arquivo = 'av1-hc_problema1-funcao1'
 # Problema 2
-# plt.savefig('av1-problema1-funcao2.png')
+# nome_arquivo = 'av1-hc_problema1-funcao2'
 # Problema 3
-# plt.savefig('av1-problema1-funcao3.png')
+# nome_arquivo = 'av1-hc_problema1-funcao3'
 # Problema 4
-# plt.savefig('av1-problema1-funcao4.png')
+# nome_arquivo = 'av1-hc_problema1-funcao4'
 # Problema 5
-# plt.savefig('av1-problema1-funcao5.png')
+# nome_arquivo = 'av1-hc_problema1-funcao5'
 # Problema 6
-# plt.savefig('av1-problema1-funcao6.png')
+# nome_arquivo = 'av1-hc_problema1-funcao6'
 # Problema 7
-# plt.savefig('av1-problema1-funcao7.png')
+# nome_arquivo = 'av1-hc_problema1-funcao7'
 # Problema 8
-# plt.savefig('av1-problema1-funcao8.png')
+# nome_arquivo = 'av1-hc_problema1-funcao8'
+solucoes.to_csv(nome_arquivo+'.csv', index=False)
+plt.savefig(nome_arquivo+'.png')
 
 plt.show()
