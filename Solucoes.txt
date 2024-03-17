@@ -1,0 +1,112 @@
+Soluções ótimas
+  -> Função 1 (min)
+     - Hill Climbing
+         e  = 0.1000
+         x  = (-0.0004, 0.0002)
+       f(x) = 0.0000
+     - Local Random Search
+         o  = 0.6676
+         x  = (49.6243, 49.6503)
+       f(x) = 4927.7317
+     - Global Random Search
+         o  = 0.0000
+         x  = (-0.0646, 0.1287)
+       f(x) = 0.0207
+
+  -> Função 2 (max)
+     - Hill Climbing
+         e  = 0.1000
+         x  = (0.0072, 0.0141)
+       f(x) = 1.0064
+     - Local Random Search
+         o  = 0.3558
+         x  = (1.6973, 1.6969)
+       f(x) = 2.0031
+     - Global Random Search
+         o  = 0.0000
+         x  = (1.7195, 1.6915)
+       f(x) = 2.0021
+
+  -> Função 3 (min)
+     - Hill Climbing
+         e  = 0.1000
+         x  = (-7.9937, -7.9922)
+       f(x) = 15.9591
+     - Local Random Search
+         o  = 0.3103
+         x  = (0.0004, -0.0001)
+       f(x) = 0.0011
+     - Global Random Search
+         o  = 0.0000
+         x  = (0.0019, -0.0170)
+       f(x) = 0.0562
+
+  -> Função 4 (min)
+     - Hill Climbing
+         e  = 0.1000
+         x  = (-4.9754, -4.9729)
+       f(x) = 49.7482
+     - Local Random Search
+         o  = 0.3286
+         x  = (0.0002, -0.0002)
+       f(x) = 0.0000
+     - Global Random Search
+         o  = 0.0000
+         x  = (-0.0283, -0.0102)
+       f(x) = 0.1793
+
+  -> Função 5 (max)
+     - Hill Climbing
+         e  = 0.1000
+         x  = (-9.9014, -10.0000)
+       f(x) = 1.4300
+     - Local Random Search
+         o  = 0.8890
+         x  = (-9.7328, -10.0000)
+       f(x) = 1.4370
+     - Global Random Search
+         o  = 0.0000
+         x  = (0.0124, 1.0182)
+       f(x) = 1.9998
+
+  -> Função 6 (max)
+     - Hill Climbing
+         e  = 0.1000
+         x  = (-1.0000, -1.0000)
+       f(x) = 1.0000
+     - Local Random Search
+         o  = 0.1336
+         x  = (2.6273, 2.6273)
+       f(x) = 6.2524
+     - Global Random Search
+         o  = 0.0000
+         x  = (2.6188, 2.6226)
+       f(x) = 6.2321
+
+  -> Função 7 (min)
+     - Hill Climbing
+         e  = 0.1000
+         x  = (1.6720, 1.5715)
+       f(x) = -1.0064
+     - Local Random Search
+         o  = 0.2127
+         x  = (2.1987, 1.5726)
+       f(x) = -1.8009
+     - Global Random Search
+         o  = 0.0000
+         x  = (2.1986, 1.5747)
+       f(x) = -1.8004
+
+  -> Função 8 (min)
+     - Hill Climbing
+         e  = 0.1000
+         x  = (-199.8983, -200.0000)
+       f(x) = 77.1787
+     - Local Random Search
+         o  = 0.1409
+         x  = (-114.3194, -134.0382)
+       f(x) = -145.8249
+     - Global Random Search
+         o  = 0.0000
+         x  = (-170.6317, -96.0059)
+       f(x) = -211.1472

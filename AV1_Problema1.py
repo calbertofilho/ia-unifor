@@ -137,7 +137,7 @@ def perturb_hc(x, hiper, limites):
     return res
 
 def perturb_lrs(x, hiper, limites):
-    n = num.random.normal(0, hiper, 2) # distribuicao normal: n ~ N(0, σ)
+    n = num.random.normal(loc=0, scale=hiper, size=(2,)) # distribuicao normal: n ~ N(0, σ)
     x_normal = num.add(x, n) # x + n
     res = num.random.uniform(low=x_normal[0], high=x_normal[1], size=(2, )) # distribuição uniforme: U(x[0], x[1])
     # verificação da restrição dos limites da função
@@ -241,7 +241,6 @@ def otimizar(tipo, busca, f, dominio, max_iteracoes, max_vizinhos):
         # Adiciona no DataFrame a melhor solução encontrada de todas as rodadas
         if (z == 99):
             solucoes.loc[z+2] = [x_melhor[0], x_melhor[1], f_melhor, hiperparametro]
-
     return solucoes
 
 if __name__ == '__main__':
@@ -295,3 +294,59 @@ if __name__ == '__main__':
     exibir(titulo='Global Random Search\nFunção 7 ('+tipo7+')', funcao=funcao7, dominio=limite7, solucoes=df, todos=False)
     df = otimizar(tipo=tipo8, busca='grs', f=funcao8, dominio=limite8, max_iteracoes=1000, max_vizinhos=0)
     exibir(titulo='Global Random Search\nFunção 8 ('+tipo8+')', funcao=funcao8, dominio=limite8, solucoes=df, todos=False)
+
+    # df = otimizar(tipo=tipo1, busca='hc', f=funcao1, dominio=limite1, max_iteracoes=1000, max_vizinhos=30)
+    # exibir(titulo='Hill Climbing\nFunção 1 ('+tipo1+')', funcao=funcao1, dominio=limite1, solucoes=df, todos=False)
+    # df = otimizar(tipo=tipo1, busca='lrs', f=funcao1, dominio=limite1, max_iteracoes=1000, max_vizinhos=0)
+    # exibir(titulo='Local Random Search\nFunção 1 ('+tipo1+')', funcao=funcao1, dominio=limite1, solucoes=df, todos=False)
+    # df = otimizar(tipo=tipo1, busca='grs', f=funcao1, dominio=limite1, max_iteracoes=1000, max_vizinhos=0)
+    # exibir(titulo='Global Random Search\nFunção 1 ('+tipo1+')', funcao=funcao1, dominio=limite1, solucoes=df, todos=False)
+
+    # df = otimizar(tipo=tipo2, busca='hc', f=funcao2, dominio=limite2, max_iteracoes=1000, max_vizinhos=30)
+    # exibir(titulo='Hill Climbing\nFunção 2 ('+tipo2+')', funcao=funcao2, dominio=limite2, solucoes=df, todos=False)
+    # df = otimizar(tipo=tipo2, busca='lrs', f=funcao2, dominio=limite2, max_iteracoes=1000, max_vizinhos=0)
+    # exibir(titulo='Local Random Search\nFunção 2 ('+tipo2+')', funcao=funcao2, dominio=limite2, solucoes=df, todos=False)
+    # df = otimizar(tipo=tipo2, busca='grs', f=funcao2, dominio=limite2, max_iteracoes=1000, max_vizinhos=0)
+    # exibir(titulo='Global Random Search\nFunção 2 ('+tipo2+')', funcao=funcao2, dominio=limite2, solucoes=df, todos=False)
+
+    # df = otimizar(tipo=tipo3, busca='hc', f=funcao3, dominio=limite3, max_iteracoes=1000, max_vizinhos=30)
+    # exibir(titulo='Hill Climbing\nFunção 3 ('+tipo3+')', funcao=funcao3, dominio=limite3, solucoes=df, todos=False)
+    # df = otimizar(tipo=tipo3, busca='lrs', f=funcao3, dominio=limite3, max_iteracoes=1000, max_vizinhos=0)
+    # exibir(titulo='Local Random Search\nFunção 3 ('+tipo3+')', funcao=funcao3, dominio=limite3, solucoes=df, todos=False)
+    # df = otimizar(tipo=tipo3, busca='grs', f=funcao3, dominio=limite3, max_iteracoes=1000, max_vizinhos=0)
+    # exibir(titulo='Global Random Search\nFunção 3 ('+tipo3+')', funcao=funcao3, dominio=limite3, solucoes=df, todos=False)
+
+    # df = otimizar(tipo=tipo4, busca='hc', f=funcao4, dominio=limite4, max_iteracoes=1000, max_vizinhos=30)
+    # exibir(titulo='Hill Climbing\nFunção 4 ('+tipo4+')', funcao=funcao4, dominio=limite4, solucoes=df, todos=False)
+    # df = otimizar(tipo=tipo4, busca='lrs', f=funcao4, dominio=limite4, max_iteracoes=1000, max_vizinhos=0)
+    # exibir(titulo='Local Random Search\nFunção 4 ('+tipo4+')', funcao=funcao4, dominio=limite4, solucoes=df, todos=False)
+    # df = otimizar(tipo=tipo4, busca='grs', f=funcao4, dominio=limite4, max_iteracoes=1000, max_vizinhos=0)
+    # exibir(titulo='Global Random Search\nFunção 4 ('+tipo4+')', funcao=funcao4, dominio=limite4, solucoes=df, todos=False)
+
+    # df = otimizar(tipo=tipo5, busca='hc', f=funcao5, dominio=limite5, max_iteracoes=1000, max_vizinhos=30)
+    # exibir(titulo='Hill Climbing\nFunção 5 ('+tipo5+')', funcao=funcao5, dominio=limite5, solucoes=df, todos=False)
+    # df = otimizar(tipo=tipo5, busca='lrs', f=funcao5, dominio=limite5, max_iteracoes=1000, max_vizinhos=0)
+    # exibir(titulo='Local Random Search\nFunção 5 ('+tipo5+')', funcao=funcao5, dominio=limite5, solucoes=df, todos=False)
+    # df = otimizar(tipo=tipo5, busca='grs', f=funcao5, dominio=limite5, max_iteracoes=1000, max_vizinhos=0)
+    # exibir(titulo='Global Random Search\nFunção 5 ('+tipo5+')', funcao=funcao5, dominio=limite5, solucoes=df, todos=False)
+
+    # df = otimizar(tipo=tipo6, busca='hc', f=funcao6, dominio=limite6, max_iteracoes=1000, max_vizinhos=30)
+    # exibir(titulo='Hill Climbing\nFunção 6 ('+tipo6+')', funcao=funcao6, dominio=limite6, solucoes=df, todos=False)
+    # df = otimizar(tipo=tipo6, busca='lrs', f=funcao6, dominio=limite6, max_iteracoes=1000, max_vizinhos=0)
+    # exibir(titulo='Local Random Search\nFunção 6 ('+tipo6+')', funcao=funcao6, dominio=limite6, solucoes=df, todos=False)
+    # df = otimizar(tipo=tipo6, busca='grs', f=funcao6, dominio=limite6, max_iteracoes=1000, max_vizinhos=0)
+    # exibir(titulo='Global Random Search\nFunção 6 ('+tipo6+')', funcao=funcao6, dominio=limite6, solucoes=df, todos=False)
+
+    # df = otimizar(tipo=tipo7, busca='hc', f=funcao7, dominio=limite7, max_iteracoes=1000, max_vizinhos=30)
+    # exibir(titulo='Hill Climbing\nFunção 7 ('+tipo7+')', funcao=funcao7, dominio=limite7, solucoes=df, todos=False)
+    # df = otimizar(tipo=tipo7, busca='lrs', f=funcao7, dominio=limite7, max_iteracoes=1000, max_vizinhos=0)
+    # exibir(titulo='Local Random Search\nFunção 7 ('+tipo7+')', funcao=funcao7, dominio=limite7, solucoes=df, todos=False)
+    # df = otimizar(tipo=tipo7, busca='grs', f=funcao7, dominio=limite7, max_iteracoes=1000, max_vizinhos=0)
+    # exibir(titulo='Global Random Search\nFunção 7 ('+tipo7+')', funcao=funcao7, dominio=limite7, solucoes=df, todos=False)
+
+    # df = otimizar(tipo=tipo8, busca='hc', f=funcao8, dominio=limite8, max_iteracoes=1000, max_vizinhos=30)
+    # exibir(titulo='Hill Climbing\nFunção 8 ('+tipo8+')', funcao=funcao8, dominio=limite8, solucoes=df, todos=False)
+    # df = otimizar(tipo=tipo8, busca='lrs', f=funcao8, dominio=limite8, max_iteracoes=1000, max_vizinhos=0)
+    # exibir(titulo='Local Random Search\nFunção 8 ('+tipo8+')', funcao=funcao8, dominio=limite8, solucoes=df, todos=False)
+    # df = otimizar(tipo=tipo8, busca='grs', f=funcao8, dominio=limite8, max_iteracoes=1000, max_vizinhos=0)
+    # exibir(titulo='Global Random Search\nFunção 8 ('+tipo8+')', funcao=funcao8, dominio=limite8, solucoes=df, todos=False)
