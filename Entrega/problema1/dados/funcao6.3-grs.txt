@@ -1,0 +1,6 @@
+Solução ótima:
+  -> funcao6
+     - Global Random Search
+         o  = 0.0000
+         x  = (2.6246, 2.6234)
+       f(x) = 6.2474

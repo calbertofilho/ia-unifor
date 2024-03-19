@@ -1,0 +1,6 @@
+Solução ótima:
+  -> funcao4
+     - Local Random Search
+         o  = 0.2912
+         x  = (0.0000, -0.0000)
+       f(x) = 0.0000

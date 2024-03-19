@@ -1,0 +1,6 @@
+Solução ótima:
+  -> funcao8
+     - Hill Climbing
+         e  = 0.1000
+         x  = (-199.8888, -199.9940)
+       f(x) = 77.1813
