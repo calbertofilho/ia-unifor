@@ -92,7 +92,7 @@ def f(entrada):
 
 def otimizar(posicoes):
     entrada = posicoes
-
+ 
     print(f(entrada))
 
 if __name__ == '__main__':
