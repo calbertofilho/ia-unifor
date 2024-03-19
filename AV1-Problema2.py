@@ -23,6 +23,7 @@ import numpy as num
 import pandas as pd
 import random as rd
 import matplotlib.pyplot as plot
+import timeit
 
 def f(entrada):
     # # Matriz recebida como entrada
@@ -124,20 +125,29 @@ def otimizar(posicoes):
     return x_otimo
 
 if __name__ == '__main__':
-    # soluções possíveis
-    solucao1 = num.array([2, 4, 6, 8, 3, 1, 7, 5], dtype=int)
-    solucao2 = num.array([8, 2, 4, 1, 7, 5, 3, 6], dtype=int)
-    # print(f(solucao1))
-    # print(f(solucao2))
-
     # entradas retiradas do livro-texto (p.161-165)
     exemplo_livro1 = num.array([2, 4, 7, 4, 8, 5, 5, 2], dtype=int)
+    # print(f(exemplo_livro1))
     exemplo_livro2 = num.array([3, 2, 7, 5, 2, 4, 1, 1], dtype=int)
+    # print(f(exemplo_livro2))
     exemplo_livro3 = num.array([2, 4, 4, 1, 5, 1, 2, 4], dtype=int)
+    # print(f(exemplo_livro3))
     exemplo_livro4 = num.array([3, 2, 5, 4, 3, 2, 1, 3], dtype=int)
+    # print(f(exemplo_livro4))
+
+    # soluções possíveis
+    solucao1 = num.array([2, 4, 6, 8, 3, 1, 7, 5], dtype=int)
+    # print(f(solucao1))
+    solucao2 = num.array([8, 2, 4, 1, 7, 5, 3, 6], dtype=int)
+    # print(f(solucao2))
 
     # entrada passada no trabalho
     teste =  num.array([5, 1, 4, 2, 6, 1, 4, 7], dtype=int)
+    # print(f(teste))
 
+    inicio = timeit.default_timer()
     sol = otimizar(posicoes=teste)
+    fim = timeit.default_timer()
+
     print(sol)
+    print(f"Tempo de execução: {fim - inicio:.4f} segundos")
