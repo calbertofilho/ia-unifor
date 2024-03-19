@@ -1,6 +1,0 @@
-Solução ótima:
-  -> funcao3
-     - Local Random Search
-         o  = 0.2847
-         x  = (0.0002, -0.0001)
-       f(x) = 0.0005

@@ -1,6 +1,0 @@
-Solução ótima:
-  -> funcao5
-     - Local Random Search
-         o  = 0.9896
-         x  = (6.7309, 10.0000)
-       f(x) = 0.9765

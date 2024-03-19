@@ -1,6 +1,0 @@
-Solução ótima:
-  -> funcao8
-     - Local Random Search
-         o  = 0.2545
-         x  = (-101.5779, -126.0393)
-       f(x) = -174.3570

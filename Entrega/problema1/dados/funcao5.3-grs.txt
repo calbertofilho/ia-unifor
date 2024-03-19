@@ -1,6 +1,0 @@
-Solução ótima:
-  -> funcao5
-     - Global Random Search
-         o  = 0.0000
-         x  = (-0.0029, 0.9924)
-       f(x) = 1.9997

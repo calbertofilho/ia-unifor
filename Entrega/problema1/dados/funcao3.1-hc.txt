@@ -1,6 +1,0 @@
-Solução ótima:
-  -> funcao3
-     - Hill Climbing
-         e  = 0.1000
-         x  = (-7.9955, -7.9966)
-       f(x) = 15.9597

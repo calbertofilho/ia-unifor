@@ -1,6 +1,0 @@
-Solução ótima:
-  -> funcao6
-     - Local Random Search
-         o  = 0.2076
-         x  = (2.6273, 2.6275)
-       f(x) = 6.2524

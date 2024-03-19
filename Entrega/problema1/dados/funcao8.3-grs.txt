@@ -1,6 +1,0 @@
-Solução ótima:
-  -> funcao8
-     - Global Random Search
-         o  = 0.0000
-         x  = (-171.8284, -96.7674)
-       f(x) = -211.1297
