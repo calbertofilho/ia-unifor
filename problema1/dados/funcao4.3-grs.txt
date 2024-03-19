@@ -1,0 +1,6 @@
+Solução ótima:
+  -> funcao4
+     - Global Random Search
+         o  = 0.0000
+         x  = (0.0139, -0.0229)
+       f(x) = 0.1425

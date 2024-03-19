@@ -74,12 +74,12 @@ def f(entrada):
 
     # print('Movimentos da Rainha 5')
     # print(movimentos[4])
-        
-    # somar o primeiro com:
-        # o ultimo
-        # o penultimo
-        # o antepenultimo
-        # até chegar no segundo
+
+    # somar a matriz de posição da primeira rainha com a matriz de possibilidades da:
+        # última rainha
+        # penúltima rainha
+        # antepenúltima rainha
+        # até chegar na segunda rainha
     # verificar as coincidências (valor = 2) e retornar quantas vezes se repetem
     res = 0
     for i in range(len(movimentos)):
@@ -88,19 +88,56 @@ def f(entrada):
             if (i < j):
                 analise = num.add(rainhas[i], movimentos[j])
                 res += num.any(analise[:] == 2)                
+
     return (28 - res)
+
+def perturb(x, n):
+    pert = x + n
+    res = num.zeros((8), dtype=int)
+    for i in range(len(pert)):
+        res[i] = int(pert[i])
+        if res[i] < 1:
+            res[i] = 1
+        if res[i] > 8:
+            res[i] = 8
+    return res
 
 def otimizar(posicoes):
     entrada = posicoes
  
-    print(f(entrada))
+    x_otimo = entrada
+    f_otimo = f(x_otimo)
+    temp = 100
+    sigma = 0.7
+    decaimento = 0.93
+
+    for _ in range(1000):
+        n = num.random.normal(0, scale=sigma)
+        x_cand = perturb(x_otimo, n)
+        f_cand = f(x_cand)
+        P_ij = num.exp(-(f_cand - f_otimo) / temp)
+        if ((f_cand > f_otimo) or (P_ij >= num.random.uniform(0, 1))):
+            x_otimo = x_cand
+            f_otimo = f_cand
+        temp = temp * decaimento
+
+    return x_otimo
 
 if __name__ == '__main__':
+    # soluções possíveis
+    solucao1 = num.array([2, 4, 6, 8, 3, 1, 7, 5], dtype=int)
+    solucao2 = num.array([8, 2, 4, 1, 7, 5, 3, 6], dtype=int)
+    # print(f(solucao1))
+    # print(f(solucao2))
+
     # entradas retiradas do livro-texto (p.161-165)
     exemplo_livro1 = num.array([2, 4, 7, 4, 8, 5, 5, 2], dtype=int)
     exemplo_livro2 = num.array([3, 2, 7, 5, 2, 4, 1, 1], dtype=int)
     exemplo_livro3 = num.array([2, 4, 4, 1, 5, 1, 2, 4], dtype=int)
     exemplo_livro4 = num.array([3, 2, 5, 4, 3, 2, 1, 3], dtype=int)
+
     # entrada passada no trabalho
     teste =  num.array([5, 1, 4, 2, 6, 1, 4, 7], dtype=int)
-    otimizar(posicoes=teste)
+
+    sol = otimizar(posicoes=teste)
+    print(sol)

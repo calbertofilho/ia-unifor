@@ -1,0 +1,6 @@
+Solução ótima:
+  -> funcao7
+     - Local Random Search
+         o  = 0.7655
+         x  = (2.2025, 1.5674)
+       f(x) = -1.8008
