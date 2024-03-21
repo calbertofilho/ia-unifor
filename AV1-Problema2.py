@@ -99,15 +99,17 @@ def f(entrada):
 def perturb(x):
     res = []
     # procurar e eliminar os repetidos trocando os elementos
-    if not(len(set(x)) == len(x)):
+    if len(set(x)) != len(x):
         for elem in x:
             if (elem in res):
                 novo_elem = rd.randint(1, 8)
-                while (novo_elem in res):
+                while ((novo_elem in res) or (novo_elem in x)):
                     novo_elem = rd.randint(1, 8)
                 res.append(novo_elem)
             else:
                 res.append(elem)
+                elem = 0
+        return num.array(res, dtype=int)
     else:
         res = x
     # fazer a mudança de local dos elementos executando uma lista circular de três posições, a partir do index sorteado num rd.randint(0, 7)
@@ -125,15 +127,13 @@ def perturb(x):
         pos2 = pos + 1
         pos3 = pos + 2
     res[pos1], res[pos2], res[pos3] = res[pos3], res[pos1], res[pos2]
-    print(res)
     return res
 
 def otimizar(posicoes):
     entrada = posicoes
  
     x_otimo = entrada
-    print('x_otimo = ')
-    print(x_otimo)
+    print('entrada = %s' % str(x_otimo))
     f_otimo = f(x_otimo)
     temp = 100
     decaimento = 0.93
@@ -173,6 +173,7 @@ if __name__ == '__main__':
 
     inicio = timeit.default_timer()
     sol = otimizar(posicoes=teste)
+    print('solucao = %s' % str(sol))
     fim = timeit.default_timer()
 
     # print(sol)
