@@ -25,6 +25,7 @@ import random as rd
 import matplotlib.pyplot as plot
 import timeit
 import warnings
+import sys
 
 # não exibir os avisos
 warnings.filterwarnings('ignore')
@@ -109,6 +110,8 @@ def perturb(x):
             else:
                 res.append(elem)
                 elem = 0
+        print('perturb = %s' % str(num.array(res, dtype=int)))
+        sys.exit()
         return num.array(res, dtype=int)
     else:
         res = x
@@ -136,7 +139,7 @@ def otimizar(posicoes):
     print('entrada = %s' % str(x_otimo))
     f_otimo = f(x_otimo)
     temp = 100
-    decaimento = 0.93
+    decaimento = 0.97
 
     for _ in range(1000):
         x_cand = perturb(x_otimo)
@@ -146,7 +149,7 @@ def otimizar(posicoes):
         # if (f_cand > f_otimo):
             x_otimo = x_cand
             f_otimo = f_cand
-        temp = temp * decaimento
+        temp *= decaimento
 
     return x_otimo
 
@@ -173,7 +176,7 @@ if __name__ == '__main__':
 
     inicio = timeit.default_timer()
     sol = otimizar(posicoes=teste)
-    print('solucao = %s' % str(sol))
+    print('solucao = %s' % str(sol))  # A soluçáo retornada ainda não é válida !!!
     fim = timeit.default_timer()
 
     # print(sol)
