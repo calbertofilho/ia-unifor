@@ -24,6 +24,10 @@ import pandas as pd
 import random as rd
 import matplotlib.pyplot as plot
 import timeit
+import warnings
+
+# não exibir os avisos
+warnings.filterwarnings('ignore')
 
 def f(entrada):
     # # Matriz recebida como entrada
@@ -92,32 +96,54 @@ def f(entrada):
 
     return (28 - res)
 
-def perturb(x, n):
-    pert = x + n
-    res = num.zeros((8), dtype=int)
-    for i in range(len(pert)):
-        res[i] = int(pert[i])
-        if res[i] < 1:
-            res[i] = 1
-        if res[i] > 8:
-            res[i] = 8
+def perturb(x):
+    res = []
+    # procurar e eliminar os repetidos trocando os elementos
+    if not(len(set(x)) == len(x)):
+        for elem in x:
+            if (elem in res):
+                novo_elem = rd.randint(1, 8)
+                while (novo_elem in res):
+                    novo_elem = rd.randint(1, 8)
+                res.append(novo_elem)
+            else:
+                res.append(elem)
+    else:
+        res = x
+    # fazer a mudança de local dos elementos executando uma lista circular de três posições, a partir do index sorteado num rd.randint(0, 7)
+    pos = rd.randint(0, 7)
+    if pos == 7:
+        pos1 = pos
+        pos2 = 0
+        pos3 = 1
+    elif pos == 6:
+        pos1 = pos
+        pos2 = pos + 1
+        pos3 = 0
+    else:
+        pos1 = pos
+        pos2 = pos + 1
+        pos3 = pos + 2
+    res[pos1], res[pos2], res[pos3] = res[pos3], res[pos1], res[pos2]
+    print(res)
     return res
 
 def otimizar(posicoes):
     entrada = posicoes
  
     x_otimo = entrada
+    print('x_otimo = ')
+    print(x_otimo)
     f_otimo = f(x_otimo)
     temp = 100
-    sigma = 0.7
     decaimento = 0.93
 
     for _ in range(1000):
-        n = num.random.normal(0, scale=sigma)
-        x_cand = perturb(x_otimo, n)
+        x_cand = perturb(x_otimo)
         f_cand = f(x_cand)
         P_ij = num.exp(-(f_cand - f_otimo) / temp)
         if ((f_cand > f_otimo) or (P_ij >= num.random.uniform(0, 1))):
+        # if (f_cand > f_otimo):
             x_otimo = x_cand
             f_otimo = f_cand
         temp = temp * decaimento
@@ -149,5 +175,5 @@ if __name__ == '__main__':
     sol = otimizar(posicoes=teste)
     fim = timeit.default_timer()
 
-    print(sol)
+    # print(sol)
     print(f"Tempo de execução: {fim - inicio:.4f} segundos")
