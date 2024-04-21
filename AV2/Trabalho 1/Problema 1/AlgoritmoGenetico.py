@@ -80,7 +80,7 @@ def recombination() -> np.ndarray[int]:
             m[xi + 1:] = 1
             x1_[m[:]==1] = x2[m[:]==1]
             x2_[m[:]==1] = x1[m[:]==1]
-        R = np.concatenate((R, x1_t.reshape(1, p * nBits), x2_t.reshape(1, p * nBits),))
+        R = np.concatenate((R, x1_.reshape(1, p * nBits), x2_.reshape(1, p * nBits),))
     return R
 
 def toggle(b:bool) -> bool:
