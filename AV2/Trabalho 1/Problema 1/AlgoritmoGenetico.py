@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
+# Rastrigin
 #                p
 # f(x) = A · p + ∑ (x[i]² − A · cos(2 · π · x[i]))
 #               i=1
@@ -18,10 +19,10 @@ mutationProb = 0.01
 
 def fitnessFunc(x):
     def rastriginFunc(x):
-        result = A * len(x)
+        rastrigin = A * len(x)
         for i in range(len(x)):
-            result += math.pow(x[i], 2) - (A * np.cos(2 * np.pi * x[i]))
-        return (A * p) + result
+            rastrigin += math.pow(x[i], 2) - (A * np.cos(2 * np.pi * x[i]))
+        return (A * p) + rastrigin
     return rastriginFunc(x) + 1
 
 def population():
