@@ -15,7 +15,7 @@ def createNavigationMap(data, dominio):
     ax = fig.add_subplot(projection='3d')
     for i in range(data.tail(1).index.item() +1):
         if data.at[i, 'G'] == 0:
-            ax.scatter(data.at[i, 'X'], data.at[i, 'Y'], data.at[i, 'Z'], marker='*', s=50, linewidth=1, color='green')
+            ax.scatter(data.at[i, 'X'], data.at[i, 'Y'], data.at[i, 'Z'], marker='*', s=100, linewidth=1, color='green', edgecolors='black', alpha=0.6)
         elif data.at[i, 'G'] == 1:
             color = 'blue'
         elif data.at[i,'G'] == 2:
@@ -25,8 +25,8 @@ def createNavigationMap(data, dominio):
         elif data.at[i,'G'] == 4:
             color = "orange"
         if data.at[i, 'G'] != 0:
-            ax.scatter(data.at[i, 'X'], data.at[i, 'Y'], data.at[i, 'Z'], marker=('*' if i == data.tail(1).index.item() else 'o'), s=(50 if i == data.tail(1).index.item() else 10), linewidth=1, color=('red' if i == data.tail(1).index.item() else color))
-    ax.set_title('Caixeiro Viajante Tridimensional Simples')
+            ax.scatter(data.at[i, 'X'], data.at[i, 'Y'], data.at[i, 'Z'], marker=('*' if i == data.tail(1).index.item() else 'o'), s=(100 if i == data.tail(1).index.item() else 10), linewidth=1, color=('red' if i == data.tail(1).index.item() else color), edgecolors='black', alpha=0.6)
+    ax.set_title('Caixeiro Viajante Tridimensional em Grupos')
     ax.set_xlabel('Eixo X')
     ax.set_ylabel('Eixo Y')
     ax.set_zlabel('Eixo Z')
