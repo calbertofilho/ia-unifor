@@ -8,13 +8,13 @@ import matplotlib.pyplot as plt
 
 # DEFINIÇÕES
 # 
-# Gene: ponto no espaço representado por coordenadas (x, y, z)
-# Indivíduo: rota única que satisfaça as condições do problema
-# População: conjunto de indivíduos, ou seja, uma coleção de rotas possíveis
-# Pais: combinação de duas rotas para criar uma nova
-# Fitness: função que avalia a melhor rota, no caso, a rota que tem menor distância
-# Elitismo: fator que permite passar para próximas gerações indivíduos com melhor desempenho
-# Mutação: forma de variar a população trocando de forma aleatória dois pontos em uma rota
+# Gene        Gene        Ponto no espaço representado por coordenadas (x, y, z)
+# Individual  Indivíduo   Rota única que satisfaça as condições do problema
+# População   Population  Conjunto de indivíduos, ou seja, uma coleção de rotas possíveis
+# Pais        Parents     Combinação de duas rotas para criar uma nova
+# Aptidão     Fitness     Função que avalia a melhor rota, no caso, a rota que tem menor distância
+# Elitismo    Elitism     Fator que permite passar para próximas gerações indivíduos com melhor desempenho
+# Mutação     Mutation    Forma de variar a população trocando de forma aleatória dois pontos em uma rota
 
 def get_data():
     '''Função que carrega os dados salvos no arquivo passado como entrada do problema'''
