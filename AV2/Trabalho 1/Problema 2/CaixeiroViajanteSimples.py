@@ -9,8 +9,11 @@ import matplotlib.pyplot as plt
 # DEFINIÇÕES
 # 
 # Gene        Gene        Ponto no espaço representado por coordenadas (x, y, z)
+N = 100
 # Individual  Indivíduo   Rota única que satisfaça as condições do problema
+p = 2
 # População   Population  Conjunto de indivíduos, ou seja, uma coleção de rotas possíveis
+# Seleção     Selection    Baseado no algoritmo do torneio
 # Pais        Parents     Combinação de duas rotas para criar uma nova
 # Aptidão     Fitness     Função que avalia a melhor rota, no caso, a rota que tem menor distância
 # Elitismo    Elitism     Fator que permite passar para próximas gerações indivíduos com melhor desempenho
@@ -46,7 +49,21 @@ def createNavigationMap(data: pd.DataFrame, dominio: list[tuple]) -> None:
     ax.view_init(elev=30, azim=-65, roll=0.)
     plt.show()
 
-def function(p1: np.array, p2: np.array) -> float:
+def tournament():
+    return
+
+def selection(population):
+    '''Função que seleciona os individuos a serem testados
+    '''
+    n = rd.randint(0, N)
+    best = []
+    for i in range(n, N, 2):
+        best.append((fitness(np.array(population[i]), np.array(population[i+1])), (population[i], population[i+1])))
+        # S = np.concatenate((S, tournament()))
+    best.sort()
+    return best[:p]
+
+def fitness(p1: np.array, p2: np.array) -> float:
     '''Função para calcular a distância entre os dois pontos no espaço
     Parâmetros
     ----------
@@ -62,22 +79,6 @@ def function(p1: np.array, p2: np.array) -> float:
     # return np.sqrt(np.sum((p1 - p2) ** 2, axis=0))
     # return math.sqrt(((p1[0] - p2[0]) ** 2) + ((p1[1] - p2[1]) ** 2) + ((p1[2] - p2[2]) ** 2))
     return np.linalg.norm(p1 - p2)
-
-def fitness(p1: np.array, p2: np.array) -> float:
-    '''Função aptidão
-    Parâmetros
-    ----------
-    p1 : np.array
-        Ponto 1 no espaço
-    p2 : np.array
-        Ponto 2 no espaço
-    Retorno
-    -------
-    float
-        Quão aceitável é a rota entre os dois pontos
-    '''
-    answer = function(p1, p2)
-    return 99999 if answer == 0 else abs(1/answer)
 
 def generatePopulation(data: pd.DataFrame) -> list[tuple]:
     pop = []
@@ -96,6 +97,7 @@ def run() -> None:
     # createNavigationMap(data, limites)
     population = generatePopulation(data)
     # print(population)
+    print(selection(population))
     for i in range(10000):
         rankedSolutions = []
         for s in population:
