@@ -8,7 +8,17 @@ import matplotlib.pyplot as plt
 
 def get_data() -> pd.DataFrame:
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
-    return pd.read_csv("EMGDataset.csv", names=["Supercílio", "Zigomático", "Rótulo"])
+    return pd.read_csv("EMGDataset.csv", names=["Supercílio", "Zigomático", "Rótulo"], sep=",")
+
+def printProgressBar(value, label):
+    n_bar = 40 # tamanho da barra
+    max = 100
+    j = value / max
+    sys.stdout.write('\r')
+    bar = '█' * int(n_bar * j)
+    bar = bar + '-' * int(n_bar * (1 - j))
+    sys.stdout.write(f"{label.ljust(10)} | [{bar:{n_bar}s}] {int(100 * j)}% ")
+    sys.stdout.flush()
 
 def plot(data) -> None:
     Sensor1 = (data.iloc[:, 0].min(), data.iloc[:, 0].max())
@@ -23,8 +33,8 @@ def plot(data) -> None:
     plt.xlabel('Sensor 1: Supercílio')
     plt.ylabel('Sensor 2: Zigomático')
     for i in range(data.tail(1).index.item() +1):
-        print(i)
         plt.scatter(data.at[i, 'Supercílio'], data.at[i, 'Zigomático'], color='blue', s=30, marker='o', linewidth=1, edgecolors="black")
+        printProgressBar((i / (data.tail(1).index.item()+1)) * 100, 'Carregando dados')
     plt.show()
 
 def run() -> None:

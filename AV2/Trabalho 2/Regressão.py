@@ -10,6 +10,16 @@ def get_data() -> pd.DataFrame:
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
     return pd.read_csv("aerogerador.dat", names=["Vel", "Pot"], sep="\t")
 
+def printProgressBar(value, label):
+    n_bar = 40 # tamanho da barra
+    max = 100
+    j = value / max
+    sys.stdout.write('\r')
+    bar = '█' * int(n_bar * j)
+    bar = bar + '-' * int(n_bar * (1 - j))
+    sys.stdout.write(f"{label.ljust(10)} | [{bar:{n_bar}s}] {int(100 * j)}% ")
+    sys.stdout.flush()
+
 def plot(data: pd.DataFrame) -> None:
     Vel = (data.iloc[:, 0].min(), data.iloc[:, 0].max())
     Pot = (data.iloc[:, 1].min(), data.iloc[:, 1].max())
@@ -24,6 +34,7 @@ def plot(data: pd.DataFrame) -> None:
     plt.ylabel('Potência')
     for i in range(data.tail(1).index.item() +1):
         plt.scatter(data.at[i, 'Vel'], data.at[i, 'Pot'], color='green', s=30, marker='o', linewidth=1, edgecolors="black")
+        printProgressBar((i / (data.tail(1).index.item()+1)) * 100, 'Carregando dados')
     plt.show()
 
 def run() -> None:
