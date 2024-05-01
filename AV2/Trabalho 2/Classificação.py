@@ -5,47 +5,53 @@ import numpy as np
 import pandas as pd
 import random as rd
 import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
+
+FIGURE_SIZE = (9, 7)
+TITLE = 'Espalhamento dos dados'
+SUBTITLE = 'Eletromiografia'
+X_LABEL = 'Sensor 1\nCorrugador do supercílio'
+Y_LABEL = 'Sensor 2\nZigomático maior'
 
 def get_data() -> pd.DataFrame:
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
     return pd.read_csv("EMGDataset.csv", names=["Supercílio", "Zigomático", "Rótulo"], sep=",")
 
-def printProgressBar(value, label):
-    n_bar = 40 # tamanho da barra
-    max = 100
-    j = value / max
-    sys.stdout.write('\r')
-    bar = '█' * int(n_bar * j)
-    bar = bar + '-' * int(n_bar * (1 - j))
-    sys.stdout.write(f"{label.ljust(10)} | [{bar:{n_bar}s}] {int(100 * j)}% ")
-    sys.stdout.flush()
-
-def plot(data) -> None:
-    Sensor1 = (data.iloc[:, 0].min(), data.iloc[:, 0].max())
-    Sensor2 = (data.iloc[:, 1].min(), data.iloc[:, 1].max())
-    realm = [Sensor1, Sensor2]
-    x_axis = np.linspace(realm[0][0], realm[0][1], 1000)
-    y_axis = np.linspace(realm[1][0], realm[1][1], 1000)
-    plt.plot(x_axis, y_axis)
+def preview_data(data: pd.DataFrame) -> None:
+    plt.figure(figsize=FIGURE_SIZE)
+    plt.suptitle(TITLE, fontsize = 16)
+    plt.title(SUBTITLE)
+    plt.xlabel(X_LABEL)
+    plt.ylabel(Y_LABEL)
     plt.grid()
-    plt.suptitle('Espalhamento dos dados', fontsize = 12)
-    plt.title("Eletromiografia")
-    plt.xlabel('Sensor 1: Supercílio')
-    plt.ylabel('Sensor 2: Zigomático')
-    for i in range(data.tail(1).index.item() +1):
-        plt.scatter(data.at[i, 'Supercílio'], data.at[i, 'Zigomático'], color='blue', s=30, marker='o', linewidth=1, edgecolors="black")
-        printProgressBar((i / (data.tail(1).index.item()+1)) * 100, 'Carregando dados')
+    colors = {
+        1.0: 'blue',
+        2.0: 'green',
+        3.0: 'red',
+        4.0: 'cyan',
+        5.0: 'magenta'
+    }
+    color_list = [colors[group] for group in data['Rótulo']]
+    plt.scatter(data['Supercílio'], data['Zigomático'], color=color_list, s=40, marker='o', linewidth=0.4, edgecolors="black", alpha=0.6)
+    legend_handles = [
+        Line2D([0], [0], color='none', marker='o', markersize=8, markerfacecolor=colors[1.0], linewidth=0.4, alpha=0.6, label="Neutro"),
+        Line2D([0], [0], color='none', marker='o', markersize=8, markerfacecolor=colors[2.0], linewidth=0.4, alpha=0.6, label="Sorriso"),
+        Line2D([0], [0], color='none', marker='o', markersize=8, markerfacecolor=colors[3.0], linewidth=0.4, alpha=0.6, label="Sobrancelhas levantadas"),
+        Line2D([0], [0], color='none', marker='o', markersize=8, markerfacecolor=colors[4.0], linewidth=0.4, alpha=0.6, label="Surpreso"),
+        Line2D([0], [0], color='none', marker='o', markersize=8, markerfacecolor=colors[5.0], linewidth=0.4, alpha=0.6, label="Rabugento")
+    ]
+    plt.legend(title="Expressões", handles=legend_handles, fancybox=True, framealpha=1, shadow=True, borderpad=1, loc="best")
     plt.show()
 
 def run() -> None:
-    print(get_data())
+    ...
 
 def close() -> None:
     sys.exit(0)
 
 try:
     if __name__ == "__main__":
-        plot(get_data())
+        preview_data(get_data())
         run()
 finally:
     close()
