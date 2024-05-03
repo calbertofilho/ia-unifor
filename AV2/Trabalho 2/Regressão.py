@@ -36,19 +36,20 @@ def run() -> None:
         df_embaralhado = df_embaralhado.sample(frac=1).reset_index(drop=True)
         # fatiamento dos dados: 80% ↔ 20%
         percentual = .8
-        x_treino = df_embaralhado.iloc[:int((df_embaralhado.tail(1).index.item()+1)*percentual), 0].values
-        x_treino.shape = (len(x_treino), 1)
-        y_treino = df_embaralhado.iloc[:int((df_embaralhado.tail(1).index.item()+1)*percentual), 1].values
-        y_treino.shape = (len(y_treino), 1)
-        x_teste = df_embaralhado.iloc[int((df_embaralhado.tail(1).index.item()+1)*percentual):(df_embaralhado.tail(1).index.item()+1), 0].values
-        x_teste.shape = (len(x_teste), 1)
-        y_teste = df_embaralhado.iloc[int((df_embaralhado.tail(1).index.item()+1)*percentual):(df_embaralhado.tail(1).index.item()+1), 1].values
-        y_teste.shape = (len(y_teste), 1)
+        x1_treino = df_embaralhado.iloc[:int((df_embaralhado.tail(1).index.item()+1)*percentual), 0].values
+        x1_treino.shape = (len(x1_treino), 1)
+        x2_treino = df_embaralhado.iloc[:int((df_embaralhado.tail(1).index.item()+1)*percentual), 1].values
+        x2_treino.shape = (len(x2_treino), 1)
+        x1_teste = df_embaralhado.iloc[int((df_embaralhado.tail(1).index.item()+1)*percentual):(df_embaralhado.tail(1).index.item()+1), 0].values
+        x1_teste.shape = (len(x1_teste), 1)
+        x2_teste = df_embaralhado.iloc[int((df_embaralhado.tail(1).index.item()+1)*percentual):(df_embaralhado.tail(1).index.item()+1), 1].values
+        x2_teste.shape = (len(x2_teste), 1)
         # calculo do MQO
-        X = np.concatenate((np.ones((len(x_treino), 1)), x_treino), axis=1)
-        B = np.linalg.pinv(X.T @ X) @ X.T @ y_treino
-        x_axis = np.linspace(df_embaralhado.iloc[:, 0].min(), df_embaralhado.iloc[:, 0].max(), 100)
+        X = np.concatenate((np.ones((len(x1_treino), 1)), x1_treino), axis=1)
+        B = np.linalg.pinv(X.T @ X) @ X.T @ x2_treino
+        x_axis = np.linspace(x1_treino.min(), x1_treino.max(), len(x1_treino))
         x_axis.shape = (len(x_axis), 1)
+        print(x_axis.shape)
         ones = np.ones((len(x_axis), 1))
         X_new = np.concatenate((ones, x_axis), axis=1)
         Y = X_new @ B
@@ -60,9 +61,9 @@ def run() -> None:
     plt.ylabel(Y_LABEL)
     plt.grid()
     # plotagem dos pontos do grupo de treino
-    plt.scatter(x_treino, y_treino, color='green', s=40, marker='o', linewidth=0.4, edgecolors="black", alpha=0.6)
+    plt.scatter(x1_treino, x2_treino, color='green', s=40, marker='o', linewidth=0.4, edgecolors="black", alpha=0.6)
     # plotagem dos pontos do grupo de teste
-    plt.scatter(x_teste, y_teste, color='orange', s=40, marker='o', linewidth=0.4, edgecolors="black", alpha=0.6)
+    plt.scatter(x1_teste, x2_teste, color='orange', s=40, marker='o', linewidth=0.4, edgecolors="black", alpha=0.6)
     # plotagem da linha
     plt.plot(x_axis, Y, color='red', linewidth=0.4)
     plt.legend(["Grupo de treino", "Grupo de teste", "Melhor reta"], fancybox=True, framealpha=1, shadow=True, borderpad=1, loc="best")
