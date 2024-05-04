@@ -44,33 +44,28 @@ def preview_data(data: pd.DataFrame) -> None:
     plt.show()
 
 def run() -> None:
+    # coleta dos dados
     data = get_data()
-    x1 = data['Supercílio'].values
-    x2 = data['Zigomático'].values
+    x = (data['Supercílio'].values, data['Zigomático'].values)
     y = data['Rótulo'].values
+    # definição da quantidade de rodadas
     for _ in range(1):
+        # embaralhamento dos dados
         data = data.sample(frac=1).reset_index(drop=True)
+        # definição do fatiamento dos dados: 80% ↔ 20%
         percentual = .8
-        x1_treino = data.iloc[:int((data.tail(1).index.item()+1)*percentual), 0].values
-        x1_treino.shape = (len(x1_treino), 1)
-        x2_treino = data.iloc[:int((data.tail(1).index.item()+1)*percentual), 1].values
-        x2_treino.shape = (len(x2_treino), 1)
+        # fatiamento dos dados
+        x_treino = (data.iloc[:int((data.tail(1).index.item()+1)*percentual), 0].values, data.iloc[:int((data.tail(1).index.item()+1)*percentual), 1].values)
         y_treino = data.iloc[:int((data.tail(1).index.item()+1)*percentual), 2].values
-        X = np.concatenate((np.ones((len(x1_treino), 1)), x1_treino), axis=1)
-        B = np.linalg.pinv(X.T @ X) @ X.T @ x2_treino
-        x_axis = np.linspace(x1_treino.min(), x1_treino.max(), len(x1_treino))
-        x_axis.shape = (len(x_axis), 1)
-        ones = np.ones((len(x_axis), 1))
-        X_new = np.concatenate((ones, x_axis), axis=1)
-        Y = X_new @ B
-        # print(y_treino[:2] == Y[:])
-        # print(y_treino[:])
-
-        # x1_teste = data.iloc[int((data.tail(1).index.item()+1)*percentual):(data.tail(1).index.item()+1), 0].values
-        # x1_teste.shape = (len(x1_teste), 1)
-        # x2_teste = data.iloc[int((data.tail(1).index.item()+1)*percentual):(data.tail(1).index.item()+1), 1].values
-        # x2_teste.shape = (len(x2_teste), 1)
-        # y_teste = data.iloc[int((data.tail(1).index.item()+1)*percentual):(data.tail(1).index.item()+1), 2].values
+        X_treino = np.concatenate((np.ones((len(x_treino), 1)), x_treino), axis=1)
+        x_teste = (data.iloc[int((data.tail(1).index.item()+1)*percentual):, 0].values, data.iloc[:int((data.tail(1).index.item()+1)*percentual), 1].values)
+        y_teste = data.iloc[int((data.tail(1).index.item()+1)*percentual):, 2].values
+        # regressão linear multivariada   →   y = X_teste · W
+        # w = (X_treino.T · X_treino)^-1 · X_treino.T · y_treino
+        w = np.linalg.pinv(X_treino.T @ X_treino) @ X_treino.T @ y_treino
+        X_teste = np.concatenate((np.ones((len(x_teste), 1)), x_teste), axis=1)
+        y = X_teste @ w
+        print(y)
 
 def close() -> None:
     sys.exit(0)
