@@ -64,8 +64,8 @@ def run() -> None:
         # w = (X_treino.T · X_treino)^-1 · X_treino.T · y_treino
         w = np.linalg.pinv(X_treino.T @ X_treino) @ X_treino.T @ y_treino
         X_teste = np.concatenate((np.ones((len(x_teste), 1)), x_teste), axis=1)
-        y = X_teste @ w
-        print(y)
+        y_predito = X_teste @ w
+        print(y_teste[135], y_predito[135])
 
 def close() -> None:
     sys.exit(0)
