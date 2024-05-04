@@ -160,7 +160,7 @@ def close() -> None:
 
 try:
     if __name__ == "__main__":
-        # plot(get_data())
+        plot(get_data())
         run()
 finally:
     close()

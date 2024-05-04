@@ -60,7 +60,8 @@ def run() -> None:
         X_treino = np.concatenate((np.ones((len(x_treino), 1)), x_treino), axis=1)
         x_teste = (data.iloc[int((data.tail(1).index.item()+1)*percentual):, 0].values, data.iloc[:int((data.tail(1).index.item()+1)*percentual), 1].values)
         y_teste = data.iloc[int((data.tail(1).index.item()+1)*percentual):, 2].values
-        # regressão linear multivariada   →   y = X_teste · W
+        # regressão linear multivariada
+        # MQO   →   y = X_teste · W
         # w = (X_treino.T · X_treino)^-1 · X_treino.T · y_treino
         w = np.linalg.pinv(X_treino.T @ X_treino) @ X_treino.T @ y_treino
         X_teste = np.concatenate((np.ones((len(x_teste), 1)), x_teste), axis=1)
