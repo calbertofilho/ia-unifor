@@ -69,15 +69,14 @@ def calc_tikhonov(data, perc_fatiamento) -> np.ndarray:
     tik_y_tst = data.iloc[int((data.tail(1).index.item()+1)*perc_fatiamento):, 1].values
     tik_x_tst.shape = tik_y_tst.shape = (len(tik_x_tst), 1)
     tik_X_trn = np.concatenate((np.ones((len(tik_x_trn), 1)), tik_x_trn), axis=1)
-    tik_I = np.identity((len(tik_x_trn)))
+    tik_I = np.identity(len(data.columns)) #p
     tik_X_tst = np.concatenate((np.ones((len(tik_x_tst), 1)), tik_x_tst), axis=1)
     res = np.empty(10)
     # Tikhonov   →   y = X_teste · W
     # 0 < ⅄ <= 1
     # w = ((X_treino.T · X_treino) + ⅄I)^-1 · X_treino.T · y_treino
     for lamb in range(1, 11):
-        lambI = (lamb * tik_I)
-        tik_w = np.linalg.pinv((tik_X_trn.T @ tik_X_trn) + lamb) @ tik_X_trn.T @ tik_y_trn       # <- ERRO na soma do produto de lambda pela Matriz Identidade (lambI)
+        tik_w = np.linalg.pinv((tik_X_trn.T @ tik_X_trn) + (tik_I * (lamb/10))) @ tik_X_trn.T @ tik_y_trn       # <- ERRO na soma do produto de lambda pela Matriz Identidade (lambI)
         tik_Y_prd = tik_X_tst @ tik_w
         res[lamb-1] = np.square(np.subtract(tik_y_tst, tik_Y_prd)).mean()
     return res
