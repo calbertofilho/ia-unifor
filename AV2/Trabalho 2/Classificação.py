@@ -77,6 +77,6 @@ def close() -> None:
 try:
     if __name__ == "__main__":
         preview_data(get_data())
-        # run()
+        run()
 finally:
     close()
