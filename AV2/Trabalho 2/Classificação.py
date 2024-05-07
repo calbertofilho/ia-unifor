@@ -43,6 +43,16 @@ def preview_data(data: pd.DataFrame) -> None:
     plt.legend(title="Expressões", handles=legend_handles, fancybox=True, framealpha=1, shadow=True, borderpad=1, loc="best")
     plt.show()
 
+def printProgressBar(value: float, label: str) -> None:
+    n_bar = 40 # tamanho da barra
+    max = 100
+    j = value / max
+    bar = '█' * int(n_bar * j)
+    bar = bar + '-' * int(n_bar * (1 - j))
+    sys.stdout.write('\r')
+    sys.stdout.write(f"{label.ljust(10)} | [{bar:{n_bar}s}] {int(100 * j)}% ")
+    sys.stdout.flush()
+
 def run() -> None:
     # coleta dos dados
     data = get_data()
@@ -60,13 +70,13 @@ def run() -> None:
         X_treino = np.concatenate((np.ones((len(x_treino), 1)), x_treino), axis=1)
         x_teste = (data.iloc[int((data.tail(1).index.item()+1)*percentual):, 0].values, data.iloc[:int((data.tail(1).index.item()+1)*percentual), 1].values)
         y_teste = data.iloc[int((data.tail(1).index.item()+1)*percentual):, 2].values
+        I = np.identity(len(data.columns)) # I₍ₚ․ₚ₎
         # regressão linear multivariada
         # MQO   →   y = X_teste · W
         # W = (Xᵀ · X)⁻¹ · Xᵀ · y
-        w = np.linalg.pinv(X_treino.T @ X_treino) @ X_treino.T @ y_treino
+        w = np.linalg.pinv(X_treino.T @ X_treino) @ X_treino.T @ y_treino   #      <-- ERRO nesta linha
         X_teste = np.concatenate((np.ones((len(x_teste), 1)), x_teste), axis=1)
         y_predito = X_teste @ w
-        print(y_teste[135], y_predito[135])
         # Tikhonov   →   y = X_teste · W
         # 0 < ⅄ <= 1
         # W = ((Xᵀ · X) + (⅄ · I₍ₚ․ₚ₎))⁻¹ · Xᵀ · y
