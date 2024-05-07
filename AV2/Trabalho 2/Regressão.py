@@ -124,6 +124,7 @@ def run(save: bool) -> None:
     pos = eqm_minimo.index(min(eqm_minimo))
     msg += (f"      Tikhonov\nMelhor lambda: {(pos + 1) / 10}\nMenor valor: {resultados[:, pos].min():.2f}\nMaior valor: {resultados[:, pos].max():.2f}\nMédia: {resultados[:, pos].mean():.2f}\nDesvio padrão: {resultados[:, pos].std():.2f}\n\n")
     if save:
+        # cria arquivo de texto com os resultados dos cálculos
         with open('Regressão/%s.txt' % nome_arquivo, 'w') as arquivo:
             arquivo.write(msg)
     print(msg)

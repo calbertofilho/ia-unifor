@@ -62,16 +62,14 @@ def run() -> None:
         y_teste = data.iloc[int((data.tail(1).index.item()+1)*percentual):, 2].values
         # regressão linear multivariada
         # MQO   →   y = X_teste · W
-        # w = (X_treino.T · X_treino)^-1 · X_treino.T · y_treino
+        # W = (Xᵀ · X)⁻¹ · Xᵀ · y
         w = np.linalg.pinv(X_treino.T @ X_treino) @ X_treino.T @ y_treino
         X_teste = np.concatenate((np.ones((len(x_teste), 1)), x_teste), axis=1)
         y_predito = X_teste @ w
         print(y_teste[135], y_predito[135])
         # Tikhonov   →   y = X_teste · W
         # 0 < ⅄ <= 1
-        # w = ((X_treino.T · X_treino) + ⅄I)^-1 · X_treino.T · y_treino
-        # I = np.identity(len(x_teste))
-        # w = np.linalg.pinv((X_treino.T @ X_treino) + (0.1 * I)) @ X_treino.T @ y_treino
+        # W = ((Xᵀ · X) + (⅄ · I₍ₚ․ₚ₎))⁻¹ · Xᵀ · y
 
 def close() -> None:
     sys.exit(0)
