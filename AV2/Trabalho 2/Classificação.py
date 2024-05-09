@@ -54,49 +54,61 @@ def printProgressBar(value: float, label: str) -> None:
     sys.stdout.flush()
 
 def run() -> None:
+    rotulos = {
+        1.0: [1, 0, 0, 0, 0],
+        2.0: [0, 1, 0, 0, 0],
+        3.0: [0, 0, 1, 0, 0],
+        4.0: [0, 0, 0, 1, 0],
+        5.0: [0, 0, 0, 0, 1]
+    }
     # coleta dos dados
     data = get_data()
-    x = (data['Supercílio'].values, data['Zigomático'].values)
-    y = data['Rótulo'].values
-    rotulos = {
-        1.0: [1, -1, -1, -1, -1],
-        2.0: [-1, 1, -1, -1, -1],
-        3.0: [-1, -1, 1, -1, -1],
-        4.0: [-1, -1, -1, 1, -1],
-        5.0: [-1, -1, -1, -1, 1]
-    }
+    #x = (data['Supercílio'].values, data['Zigomático'].values)
+    #y = (data['Rótulo'].values, 0, 0, 0, 0)
+    # definição do fatiamento dos dados: 80% ↔ 20%
+    percentual = .8
+    y_treino = np.empty([40000, 5])
     # definição da quantidade de rodadas
-    for _ in range(1000):
+    for _ in range(1):
         # embaralhamento dos dados
         data = data.sample(frac=1).reset_index(drop=True)
-        # definição do fatiamento dos dados: 80% ↔ 20%
-        percentual = .8
         # fatiamento dos dados
         x_treino = data.iloc[:int((data.tail(1).index.item()+1)*percentual), :2]
-        y_treino = data.iloc[:int((data.tail(1).index.item()+1)*percentual), 2:]
+        y_treino = np.array(data.iloc[:int((data.tail(1).index.item()+1)*percentual), 2:]["Rótulo"].map(rotulos))
+        pos = rd.randint(0, 39999)
+        print(f"pos = {pos}")
+        print(f"valor y = {data.iloc[:int((data.tail(1).index.item()+1)*percentual), 2:]['Rótulo'][pos]}")
+        print(f"array y = {y_treino[pos]}")
+        print(f"argmax = {np.argmax(y_treino[pos]) +1}")
+        print(f"shape = ({len(y_treino)}, {len(y_treino[0])})")
+        y_treino.reshape(len(y_treino), len(y_treino[0]))
         X_treino = np.concatenate((np.ones((len(x_treino), 1)), x_treino), axis=1)
         x_teste = data.iloc[int((data.tail(1).index.item()+1)*percentual):, :2]
         y_teste = data.iloc[int((data.tail(1).index.item()+1)*percentual):, :2]
-        I = np.identity(len(X_treino[0])) # I₍ₚ․ₚ₎
+        I = np.identity(5) # I₍ₚ․ₚ₎
         # regressão linear multivariada
         # MQO   →   y = X_teste · W
         # W = (Xᵀ · X)⁻¹ · Xᵀ · y
-        w = np.linalg.pinv(X_treino.T @ X_treino) @ X_treino.T @ y_treino
-        print(f"w {w}")
-        print(rotulos[np.argmax(w) + 1])
+        print(X_treino.T.shape)
+        print(X_treino.shape)
+        print(X_treino.T.shape)
+        print(y_treino.shape)
+#        w = np.linalg.pinv(X_treino.T @ X_treino) @ X_treino.T @ y_treino
+#        print(f"w {w}")
+#        print(np.argmax(w))
         # W = (Y · Xᵀ) · (X · Xᵀ)⁻¹
         # w = (y_treino @ X_treino.T) @ np.linalg.pinv(X_treino @ X_treino.T)
         X_teste = np.concatenate((np.ones((len(x_teste), 1)), x_teste), axis=1)
         y_predito = X_teste @ w
-        print(f"y = {y_predito}")
+        #print(f"y = {y_predito}")
         # Tikhonov   →   y = X_teste · W
         # 0 < ⅄ <= 1
         # W = ((Xᵀ · X) + (⅄ · I₍ₚ․ₚ₎))⁻¹ · Xᵀ · y
         wI = np.linalg.pinv((X_treino.T @ X_treino) + (0.3 * I)) @ X_treino.T @ y_treino   #      <-- ERRO nesta linha
-        print(f"wI{wI}")
-        print(rotulos[np.argmax(wI) + 1])
+        #print(f"wI{wI}")
+        #print(rotulos[np.argmax(wI) + 1])
         yI_predito = X_teste @ wI
-        print(f"yI = {yI_predito}")
+        #print(f"yI = {yI_predito}")
 
 def close() -> None:
     sys.exit(0)
