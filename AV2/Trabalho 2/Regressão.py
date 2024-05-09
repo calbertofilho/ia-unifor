@@ -79,7 +79,7 @@ def calc_tikhonov(data: pd.DataFrame, perc_fatiamento: float) -> np.ndarray:
     tik_y_tst = data.iloc[int((data.tail(1).index.item()+1)*perc_fatiamento):, 1].values
     tik_x_tst.shape = tik_y_tst.shape = (len(tik_x_tst), 1)
     tik_X_trn = np.concatenate((np.ones((len(tik_x_trn), 1)), tik_x_trn), axis=1)
-    tik_I = np.identity(len(data.columns)) # I₍ₚ․ₚ₎
+    tik_I = np.identity(len(tik_X_trn[0])) # I₍ₚ․ₚ₎
     tik_X_tst = np.concatenate((np.ones((len(tik_x_tst), 1)), tik_x_tst), axis=1)
     res = np.empty(10)
     # Tikhonov   →   y = X_teste · W

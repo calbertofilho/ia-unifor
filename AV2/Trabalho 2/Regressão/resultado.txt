@@ -4,15 +4,15 @@ Erro Quadrático Médio
 ---------------------
 
         M Q O
-Menor valor: 431.01
-Maior valor: 1401.98
-Média: 800.55
-Desvio padrão: 166.03
+Menor valor: 429.34
+Maior valor: 1358.17
+Média: 796.80
+Desvio padrão: 167.07
 
       Tikhonov
-Melhor lambda: 0.3
-Menor valor: 431.61
-Maior valor: 1400.09
-Média: 800.53
-Desvio padrão: 165.56
+Melhor lambda: 0.4
+Menor valor: 430.69
+Maior valor: 1354.22
+Média: 796.75
+Desvio padrão: 166.12
 

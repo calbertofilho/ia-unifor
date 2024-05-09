@@ -58,35 +58,52 @@ def run() -> None:
     data = get_data()
     x = (data['Supercílio'].values, data['Zigomático'].values)
     y = data['Rótulo'].values
+    rotulos = {
+        1.0: [1, -1, -1, -1, -1],
+        2.0: [-1, 1, -1, -1, -1],
+        3.0: [-1, -1, 1, -1, -1],
+        4.0: [-1, -1, -1, 1, -1],
+        5.0: [-1, -1, -1, -1, 1]
+    }
     # definição da quantidade de rodadas
-    for _ in range(1):
+    for _ in range(1000):
         # embaralhamento dos dados
         data = data.sample(frac=1).reset_index(drop=True)
         # definição do fatiamento dos dados: 80% ↔ 20%
         percentual = .8
         # fatiamento dos dados
-        x_treino = (data.iloc[:int((data.tail(1).index.item()+1)*percentual), 0].values, data.iloc[:int((data.tail(1).index.item()+1)*percentual), 1].values)
-        y_treino = data.iloc[:int((data.tail(1).index.item()+1)*percentual), 2].values
+        x_treino = data.iloc[:int((data.tail(1).index.item()+1)*percentual), :2]
+        y_treino = data.iloc[:int((data.tail(1).index.item()+1)*percentual), 2:]
         X_treino = np.concatenate((np.ones((len(x_treino), 1)), x_treino), axis=1)
-        x_teste = (data.iloc[int((data.tail(1).index.item()+1)*percentual):, 0].values, data.iloc[:int((data.tail(1).index.item()+1)*percentual), 1].values)
-        y_teste = data.iloc[int((data.tail(1).index.item()+1)*percentual):, 2].values
-        I = np.identity(len(data.columns)) # I₍ₚ․ₚ₎
+        x_teste = data.iloc[int((data.tail(1).index.item()+1)*percentual):, :2]
+        y_teste = data.iloc[int((data.tail(1).index.item()+1)*percentual):, :2]
+        I = np.identity(len(X_treino[0])) # I₍ₚ․ₚ₎
         # regressão linear multivariada
         # MQO   →   y = X_teste · W
         # W = (Xᵀ · X)⁻¹ · Xᵀ · y
-        w = np.linalg.pinv(X_treino.T @ X_treino) @ X_treino.T @ y_treino   #      <-- ERRO nesta linha
+        w = np.linalg.pinv(X_treino.T @ X_treino) @ X_treino.T @ y_treino
+        print(f"w {w}")
+        print(rotulos[np.argmax(w) + 1])
+        # W = (Y · Xᵀ) · (X · Xᵀ)⁻¹
+        # w = (y_treino @ X_treino.T) @ np.linalg.pinv(X_treino @ X_treino.T)
         X_teste = np.concatenate((np.ones((len(x_teste), 1)), x_teste), axis=1)
         y_predito = X_teste @ w
+        print(f"y = {y_predito}")
         # Tikhonov   →   y = X_teste · W
         # 0 < ⅄ <= 1
         # W = ((Xᵀ · X) + (⅄ · I₍ₚ․ₚ₎))⁻¹ · Xᵀ · y
+        wI = np.linalg.pinv((X_treino.T @ X_treino) + (0.3 * I)) @ X_treino.T @ y_treino   #      <-- ERRO nesta linha
+        print(f"wI{wI}")
+        print(rotulos[np.argmax(wI) + 1])
+        yI_predito = X_teste @ wI
+        print(f"yI = {yI_predito}")
 
 def close() -> None:
     sys.exit(0)
 
 try:
     if __name__ == "__main__":
-        preview_data(get_data())
+        # preview_data(get_data())
         run()
 finally:
     close()
