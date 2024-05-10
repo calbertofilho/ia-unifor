@@ -12,36 +12,82 @@ TITLE = 'Espalhamento dos dados'
 SUBTITLE = 'Eletromiografia'
 X_LABEL = 'Sensor 1\nCorrugador do supercílio'
 Y_LABEL = 'Sensor 2\nZigomático maior'
+COLORS = {
+    1.0: 'blue',
+    2.0: 'green',
+    3.0: 'red',
+    4.0: 'cyan',
+    5.0: 'magenta'
+}
+ROTULOS = {
+    1.0: [1, 0, 0, 0, 0],
+    2.0: [0, 1, 0, 0, 0],
+    3.0: [0, 0, 1, 0, 0],
+    4.0: [0, 0, 0, 1, 0],
+    5.0: [0, 0, 0, 0, 1]
+}
 
 def get_data() -> pd.DataFrame:
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
     return pd.read_csv("EMGDataset.csv", names=["Supercílio", "Zigomático", "Rótulo"], sep=",")
 
-def preview_data(data: pd.DataFrame) -> None:
+def check_dirs() -> None:
+    # verifica e cria os diretorios necessarios para salvar os arquivos
+    if not os.path.exists('AV2/Trabalho 2/Classificação'):
+        os.makedirs('AV2/Trabalho 2/Classificação')
+
+def preview_data(data: pd.DataFrame, savefig: bool) -> None:
     plt.figure(figsize=FIGURE_SIZE)
     plt.suptitle(TITLE, fontsize = 16)
     plt.title(SUBTITLE)
     plt.xlabel(X_LABEL)
     plt.ylabel(Y_LABEL)
     plt.grid()
-    colors = {
-        1.0: 'blue',
-        2.0: 'green',
-        3.0: 'red',
-        4.0: 'cyan',
-        5.0: 'magenta'
-    }
-    color_list = [colors[group] for group in data['Rótulo']]
+    color_list = [COLORS[group] for group in data['Rótulo']]
     plt.scatter(data['Supercílio'], data['Zigomático'], color=color_list, s=40, marker='o', linewidth=0.4, edgecolors="black", alpha=0.6)
     legend_handles = [
-        Line2D([0], [0], color='none', marker='o', markersize=8, markerfacecolor=colors[1.0], linewidth=0.4, alpha=0.6, label="Neutro"),
-        Line2D([0], [0], color='none', marker='o', markersize=8, markerfacecolor=colors[2.0], linewidth=0.4, alpha=0.6, label="Sorriso"),
-        Line2D([0], [0], color='none', marker='o', markersize=8, markerfacecolor=colors[3.0], linewidth=0.4, alpha=0.6, label="Sobrancelhas levantadas"),
-        Line2D([0], [0], color='none', marker='o', markersize=8, markerfacecolor=colors[4.0], linewidth=0.4, alpha=0.6, label="Surpreso"),
-        Line2D([0], [0], color='none', marker='o', markersize=8, markerfacecolor=colors[5.0], linewidth=0.4, alpha=0.6, label="Rabugento")
+        Line2D([0], [0], color='none', marker='o', markersize=8, markerfacecolor=COLORS[1.0], linewidth=0.4, alpha=0.6, label="Neutro"),
+        Line2D([0], [0], color='none', marker='o', markersize=8, markerfacecolor=COLORS[2.0], linewidth=0.4, alpha=0.6, label="Sorriso"),
+        Line2D([0], [0], color='none', marker='o', markersize=8, markerfacecolor=COLORS[3.0], linewidth=0.4, alpha=0.6, label="Sobrancelhas levantadas"),
+        Line2D([0], [0], color='none', marker='o', markersize=8, markerfacecolor=COLORS[4.0], linewidth=0.4, alpha=0.6, label="Surpreso"),
+        Line2D([0], [0], color='none', marker='o', markersize=8, markerfacecolor=COLORS[5.0], linewidth=0.4, alpha=0.6, label="Rabugento")
     ]
     plt.legend(title="Expressões", handles=legend_handles, fancybox=True, framealpha=1, shadow=True, borderpad=1, loc="best")
+    if savefig:
+        nome_arquivo = 'espalhamento'
+        # cria a imagem .png estática do gráfico
+        plt.savefig('Classificação/%s.png' % nome_arquivo)
     plt.show()
+
+def calc_mqo(data: pd.DataFrame, perc_fatiamento: float) -> float:
+    # fatiamento dos dados
+    mqo_x_treino = data.iloc[:int((data.tail(1).index.item()+1)*perc_fatiamento), :2]
+    mqo_y_treino = np.vstack(data.iloc[:int((data.tail(1).index.item()+1)*perc_fatiamento), 2:]["Rótulo"].map(ROTULOS))
+    mqo_X_treino = np.concatenate((np.ones((len(mqo_x_treino), 1)), mqo_x_treino), axis=1)
+    mqo_x_teste = data.iloc[int((data.tail(1).index.item()+1)*perc_fatiamento):, :2]
+    mqo_y_teste = data.iloc[int((data.tail(1).index.item()+1)*perc_fatiamento):, 2:]
+    mqo_X_teste = np.concatenate((np.ones((len(mqo_x_teste), 1)), mqo_x_teste), axis=1)
+    # cálculo do MQO
+    mqo_w = np.linalg.pinv(mqo_X_treino.T @ mqo_X_treino) @ mqo_X_treino.T @ mqo_y_treino
+    mqo_y_predito = mqo_X_teste @ mqo_w
+    return (sum(mqo_y_teste['Rótulo'] == mqo_y_predito.argmax(axis=1)+1) / len(mqo_y_predito)) #ACURÁCIA
+
+def calc_tikhonov(data: pd.DataFrame, perc_fatiamento: float) -> np.ndarray:
+    # fatiamento dos dados
+    tik_x_treino = data.iloc[:int((data.tail(1).index.item()+1)*perc_fatiamento), :2]
+    tik_y_treino = np.vstack(data.iloc[:int((data.tail(1).index.item()+1)*perc_fatiamento), 2:]["Rótulo"].map(ROTULOS))
+    tik_X_treino = np.concatenate((np.ones((len(tik_x_treino), 1)), tik_x_treino), axis=1)
+    tik_x_teste = data.iloc[int((data.tail(1).index.item()+1)*perc_fatiamento):, :2]
+    tik_y_teste = data.iloc[int((data.tail(1).index.item()+1)*perc_fatiamento):, 2:]
+    tik_X_teste = np.concatenate((np.ones((len(tik_x_teste), 1)), tik_x_teste), axis=1)
+    # cálculo do MQO Regularizado (Tikhonov)
+    tik_I = np.identity(len(tik_X_treino[0])) # I₍ₚ․ₚ₎
+    res = np.empty(10)
+    for lamb in range(1, 11):
+        tik_w = np.linalg.pinv((tik_X_treino.T @ tik_X_treino) + (tik_I * (lamb/10))) @ tik_X_treino.T @ tik_y_treino
+        tik_y_predito = tik_X_teste @ tik_w
+        res[lamb-1] = (sum(tik_y_teste['Rótulo'] == tik_y_predito.argmax(axis=1)+1) / len(tik_y_predito)) #ACURÁCIA
+    return res
 
 def printProgressBar(value: float, label: str) -> None:
     n_bar = 40 # tamanho da barra
@@ -53,69 +99,44 @@ def printProgressBar(value: float, label: str) -> None:
     sys.stdout.write(f"{label.ljust(10)} | [{bar:{n_bar}s}] {int(100 * j)}% ")
     sys.stdout.flush()
 
-def run() -> None:
-    rotulos = {
-        1.0: [1, 0, 0, 0, 0],
-        2.0: [0, 1, 0, 0, 0],
-        3.0: [0, 0, 1, 0, 0],
-        4.0: [0, 0, 0, 1, 0],
-        5.0: [0, 0, 0, 0, 1]
-    }
+def run(save:bool) -> None:
     # coleta dos dados
     data = get_data()
-    #x = (data['Supercílio'].values, data['Zigomático'].values)
-    #y = (data['Rótulo'].values, 0, 0, 0, 0)
     # definição do fatiamento dos dados: 80% ↔ 20%
     percentual = .8
-    y_treino = np.empty([40000, 5])
     # definição da quantidade de rodadas
-    for _ in range(1):
+    rodadas = 100
+    nome_arquivo = 'resultado'
+    resultados = np.empty([rodadas, 11])
+    for rodada in range(rodadas):
+        printProgressBar((rodada / rodadas) * 100, 'Calculando...')
         # embaralhamento dos dados
         data = data.sample(frac=1).reset_index(drop=True)
-        # fatiamento dos dados
-        x_treino = data.iloc[:int((data.tail(1).index.item()+1)*percentual), :2]
-        y_treino = np.array(data.iloc[:int((data.tail(1).index.item()+1)*percentual), 2:]["Rótulo"].map(rotulos))
-        pos = rd.randint(0, 39999)
-        print(f"pos = {pos}")
-        print(f"valor y = {data.iloc[:int((data.tail(1).index.item()+1)*percentual), 2:]['Rótulo'][pos]}")
-        print(f"array y = {y_treino[pos]}")
-        print(f"argmax = {np.argmax(y_treino[pos]) +1}")
-        print(f"shape = ({len(y_treino)}, {len(y_treino[0])})")
-        y_treino.reshape(len(y_treino), len(y_treino[0]))
-        X_treino = np.concatenate((np.ones((len(x_treino), 1)), x_treino), axis=1)
-        x_teste = data.iloc[int((data.tail(1).index.item()+1)*percentual):, :2]
-        y_teste = data.iloc[int((data.tail(1).index.item()+1)*percentual):, :2]
-        I = np.identity(5) # I₍ₚ․ₚ₎
-        # regressão linear multivariada
-        # MQO   →   y = X_teste · W
-        # W = (Xᵀ · X)⁻¹ · Xᵀ · y
-        print(X_treino.T.shape)
-        print(X_treino.shape)
-        print(X_treino.T.shape)
-        print(y_treino.shape)
-#        w = np.linalg.pinv(X_treino.T @ X_treino) @ X_treino.T @ y_treino
-#        print(f"w {w}")
-#        print(np.argmax(w))
-        # W = (Y · Xᵀ) · (X · Xᵀ)⁻¹
-        # w = (y_treino @ X_treino.T) @ np.linalg.pinv(X_treino @ X_treino.T)
-        X_teste = np.concatenate((np.ones((len(x_teste), 1)), x_teste), axis=1)
-        y_predito = X_teste @ w
-        #print(f"y = {y_predito}")
-        # Tikhonov   →   y = X_teste · W
-        # 0 < ⅄ <= 1
-        # W = ((Xᵀ · X) + (⅄ · I₍ₚ․ₚ₎))⁻¹ · Xᵀ · y
-        wI = np.linalg.pinv((X_treino.T @ X_treino) + (0.3 * I)) @ X_treino.T @ y_treino   #      <-- ERRO nesta linha
-        #print(f"wI{wI}")
-        #print(rotulos[np.argmax(wI) + 1])
-        yI_predito = X_teste @ wI
-        #print(f"yI = {yI_predito}")
+        resultados[rodada] = np.append([ calc_mqo(data, percentual) ], [ calc_tikhonov(data, percentual) ])
+    printProgressBar(100, 'Concluído !!!')
+    msg = "\n\nAcurácias\n---------\n\n"
+    msg += (f"        M Q O\nMenor valor: {resultados[:, 1].min():.2f}\nMaior valor: {resultados[:, 1].max():.2f}\nMédia: {resultados[:, 1].mean():.2f}\nDesvio padrão: {resultados[:, 1].std():.2f}\nModas:\n{resultados[:4, :1]}\n ... {resultados[:, :1].shape}\n\n")
+    acuracia = []
+    for i in range(1, 11, 1):
+        acuracia.append(resultados[:, i].mean())
+    pos = acuracia.index(min(acuracia))
+    msg += (f"      Tikhonov\nMelhor lambda: {(pos + 1) / 10}\nMenor valor: {resultados[:, pos].min():.2f}\nMaior valor: {resultados[:, pos].max():.2f}\nMédia: {resultados[:, pos].mean():.2f}\nDesvio padrão: {resultados[:, pos].std():.2f}\nModas:\n{resultados[:4, 1:]}\n ... {resultados[:, 1:].shape}\n\n")
+    if save:
+        # cria arquivo de texto com os resultados dos cálculos
+        with open('Classificação/%s.txt' % nome_arquivo, 'w') as arquivo:
+            arquivo.write(msg)
+        pd.DataFrame(data=resultados[:, :1], columns=['MQO']).to_csv('Classificação/acuracia_mqo.csv', index=False)
+        pd.DataFrame(data=resultados[:, 1:], columns=['0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7', '0.8', '0.9', '1.0']).to_csv('Classificação/acuracia_tikhonov.csv', index=False)
+    print(msg)
 
 def close() -> None:
     sys.exit(0)
 
 try:
     if __name__ == "__main__":
-        # preview_data(get_data())
-        run()
+        check_dirs()
+        preview_data(get_data(), savefig=True)
+        run(save=True)
+        # plot_mqo(get_data(), savefig=True)
 finally:
     close()
