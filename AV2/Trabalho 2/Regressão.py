@@ -10,7 +10,7 @@ X_LABEL = 'Velocidade do vento'
 Y_LABEL = 'Potência gerada'
 FIGURE_SIZE = (7, 5)
 
-def get_data() -> pd.DataFrame:
+def load_full_data() -> pd.DataFrame:
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
     return pd.read_csv("aerogerador.dat", names=["Vel", "Pot"], sep="\t")
 
@@ -114,7 +114,7 @@ def printProgressBar(value: float, label: str) -> None:
 
 def run(save: bool) -> None:
     # coleta dos dados
-    df_embaralhado = get_data()
+    df_embaralhado = load_full_data()
     # fatiamento dos dados: 80% ↔ 20%
     percentual = .8
     # definição da quantidade de rodadas
@@ -128,12 +128,12 @@ def run(save: bool) -> None:
         resultados[rodada] = np.append([ calc_distretas(df_embaralhado, percentual), calc_mqo(df_embaralhado, percentual) ], [ calc_tikhonov(df_embaralhado, percentual) ])
     printProgressBar(100, 'Concluído !!!')
     msg = "\n\nErro Quadrático Médio\n---------------------\n\n"
-    msg += (f"        M Q O\nMenor valor: {resultados[:, 1].min():.2f}\nMaior valor: {resultados[:, 1].max():.2f}\nMédia: {resultados[:, 1].mean():.2f}\nDesvio padrão: {resultados[:, 1].std():.2f}\n\n")
+    msg += (f"        M Q O\nMenor valor: {resultados[:, :1].min():.2f}\nMaior valor: {resultados[:, :1].max():.2f}\nMédia: {resultados[:, :1].mean():.2f}\nDesvio padrão: {resultados[:, :1].std():.2f}\n\n")
     eqm_minimo = []
     for i in range(2, 12, 1):
         eqm_minimo.append(resultados[:, i].mean())
-    pos = eqm_minimo.index(min(eqm_minimo))
-    msg += (f"      Tikhonov\nMelhor lambda: {(pos + 1) / 10}\nMenor valor: {resultados[:, pos].min():.2f}\nMaior valor: {resultados[:, pos].max():.2f}\nMédia: {resultados[:, pos].mean():.2f}\nDesvio padrão: {resultados[:, pos].std():.2f}\n\n")
+    pos = eqm_minimo.index(min(eqm_minimo)) +1
+    msg += (f"      Tikhonov\nMelhor lambda: {pos / 10}\nMenor valor: {resultados[:, pos].min():.2f}\nMaior valor: {resultados[:, pos].max():.2f}\nMédia: {resultados[:, pos].mean():.2f}\nDesvio padrão: {resultados[:, pos].std():.2f}\n\n")
     if save:
         # cria arquivo de texto com os resultados dos cálculos
         with open('Regressão/%s.txt' % nome_arquivo, 'w') as arquivo:
@@ -180,14 +180,59 @@ def plot_mqo(data: pd.DataFrame, savefig: bool) -> None:
             plt.savefig('Regressão/%s.png' % nome_arquivo)
         plt.show()
 
+def plot_tik(data: pd.DataFrame, savefig: bool) -> None:
+    # embaralhamento dos dados
+    data = data.sample(frac=1).reset_index(drop=True)
+    # fatiamento dos dados: 80% ↔ 20%
+    percentual = .8
+    tik_x_trn = data.iloc[:int((data.tail(1).index.item()+1)*percentual), 0].values
+    tik_y_trn = data.iloc[:int((data.tail(1).index.item()+1)*percentual), 1].values
+    tik_x_trn.shape = tik_y_trn.shape = (len(tik_x_trn), 1)
+    tik_x_tst = data.iloc[int((data.tail(1).index.item()+1)*percentual):, 0].values
+    tik_y_tst = data.iloc[int((data.tail(1).index.item()+1)*percentual):, 1].values
+    tik_x_tst.shape = tik_y_tst.shape = (len(tik_x_tst), 1)
+    tik_X_trn = np.concatenate((np.ones((len(tik_x_trn), 1)), tik_x_trn), axis=1)
+    tik_I = np.identity(len(tik_X_trn[0])) # I₍ₚ․ₚ₎
+    tik_X_tst = np.concatenate((np.ones((len(tik_x_tst), 1)), tik_x_tst), axis=1)
+    res = np.empty(10)
+    for lamb in range(1, 11):
+        tik_w = np.linalg.pinv((tik_X_trn.T @ tik_X_trn) + (tik_I * (lamb/10))) @ tik_X_trn.T @ tik_y_trn
+        tik_Y_prd = tik_X_tst @ tik_w
+        res[lamb-1] = np.square(np.subtract(tik_y_tst, tik_Y_prd)).mean()
+    eqm_minimo = []
+    for i in range(0, 10, 1):
+        eqm_minimo.append(res[i].mean())
+    pos = eqm_minimo.index(min(eqm_minimo))
+    tik_w = np.linalg.pinv((tik_X_trn.T @ tik_X_trn) + (tik_I * (pos / 10))) @ tik_X_trn.T @ tik_y_trn
+    tik_Y_prd = tik_X_tst @ tik_w
+    # definição do gráfico
+    plt.figure(figsize=FIGURE_SIZE)
+    plt.suptitle("Predição da melhor reta [TIKHONOV]", fontsize = 16)
+    plt.title(SUBTITLE)
+    plt.xlabel(X_LABEL)
+    plt.ylabel(Y_LABEL)
+    plt.grid()
+    # plotagem dos pontos do grupo de treino
+    plt.scatter(tik_x_trn, tik_y_trn, color='green', s=40, marker='o', linewidth=0.4, edgecolors="black", alpha=0.6)
+    # plotagem dos pontos do grupo de teste
+    plt.scatter(tik_x_tst, tik_y_tst, color='orange', s=40, marker='o', linewidth=0.4, edgecolors="black", alpha=0.6)
+    # plotagem da linha
+    plt.plot(tik_x_tst, tik_Y_prd, color='red', linewidth=0.4)
+    plt.legend(["Grupo de treino", "Grupo de teste", "Melhor reta"], fancybox=True, framealpha=1, shadow=True, borderpad=1, loc="best")
+    if savefig:
+        nome_arquivo = 'tikhonov'
+        plt.savefig('Regressão/%s.png' % nome_arquivo)
+    plt.show()
+
 def close() -> None:
     sys.exit(0)
 
 try:
     if __name__ == "__main__":
         check_dirs()
-        preview_data(get_data(), savefig=True)
+        preview_data(load_full_data(), savefig=True)
         run(save=True)
-        plot_mqo(get_data(), savefig=True)
+        plot_mqo(load_full_data(), savefig=True)
+        plot_tik(load_full_data(), savefig=True)
 finally:
     close()
