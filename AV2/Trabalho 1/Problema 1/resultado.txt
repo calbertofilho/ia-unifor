@@ -1,0 +1,7 @@
+
+Solução da função de Rastrigin encontrada com aptidão de 235.0000, a partir da 28ª geração
+
+Menor aptidão: 235.0000
+Maior aptidão: 1262.1111
+Média de todas aptidões: 298.8509
+Desvio padrão das aptidões em todas as rodadas: 32.2526
