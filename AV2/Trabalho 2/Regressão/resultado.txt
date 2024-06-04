@@ -1,18 +1,18 @@
 
 
-Erro Quadr·tico MÈdio
+Erro Quadr√°tico M√©dio
 ---------------------
 
         M Q O
-Menor valor: 447.31
-Maior valor: 1587.56
-MÈdia: 801.98
-Desvio padr„o: 174.22
+Menor valor: 414.58
+Maior valor: 1431.99
+M√©dia: 798.29
+Desvio padr√£o: 169.58
 
       Tikhonov
-Melhor lambda: 0.7
-Menor valor: 451.97
-Maior valor: 1570.71
-MÈdia: 801.80
-Desvio padr„o: 171.34
+Melhor lambda: 0.4
+Menor valor: 417.29
+Maior valor: 1423.05
+M√©dia: 798.23
+Desvio padr√£o: 168.16
 
