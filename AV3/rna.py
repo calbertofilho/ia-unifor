@@ -20,10 +20,16 @@ def run():
     aerogerador = load_full_data("aerogerador.dat", ["Vel", "Pot"], "\t", False)
     red_wine = load_full_data("winequality-red.csv", ["fixed acidity", "volatile acidity", "citric acid", "residual sugar", "chlorides", "free sulfur dioxide", "total sulfur dioxide", "density", "pH", "sulphates", "alcohol", "quality"], ";", True)
     white_wine = load_full_data("winequality-white.csv", ["fixed acidity", "volatile acidity", "citric acid", "residual sugar", "chlorides", "free sulfur dioxide", "total sulfur dioxide", "density", "pH", "sulphates", "alcohol", "quality"], ";", True)
-    data = aerogerador
+    data = red_wine
     perc = Perceptron(data)
     print(perc.getDados())
-    print(perc.getShape())
+    perc.shuffleDados()
+    print(perc.getDados())
+    X_treino, X_teste, y_treino, y_teste = perc.partitionDados(percentual=0.8)
+    print(X_treino)
+    print(y_treino)
+    print(X_teste)
+    print(y_teste)
 
 def close() -> None:
     sys.exit(0)

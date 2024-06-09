@@ -15,3 +15,13 @@ class Perceptron:
 
     def getShape(self) -> tuple[int, int]:
         return self.dados.shape
+
+    def shuffleDados(self) -> None:
+        self.setDados(self.dados.sample(frac=1).reset_index(drop=True))
+
+    def partitionDados(self, percentual: float) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+        X = self.dados.iloc[:int((self.dados.tail(1).index.item()+1)*percentual), :len(self.dados.axes[1])-1].values
+        y = self.dados.iloc[:int((self.dados.tail(1).index.item()+1)*percentual), len(self.dados.axes[1])-1:].values
+        X_rest = self.dados.iloc[int((self.dados.tail(1).index.item()+1)*percentual):, :len(self.dados.axes[1])-1].values
+        y_rest = self.dados.iloc[int((self.dados.tail(1).index.item()+1)*percentual):, len(self.dados.axes[1])-1:].values
+        return X, X_rest, y, y_rest
