@@ -20,8 +20,8 @@ def run():
     aerogerador = load_full_data("aerogerador.dat", ["Vel", "Pot"], "\t", False)
     red_wine = load_full_data("winequality-red.csv", ["fixed acidity", "volatile acidity", "citric acid", "residual sugar", "chlorides", "free sulfur dioxide", "total sulfur dioxide", "density", "pH", "sulphates", "alcohol", "quality"], ";", True)
     white_wine = load_full_data("winequality-white.csv", ["fixed acidity", "volatile acidity", "citric acid", "residual sugar", "chlorides", "free sulfur dioxide", "total sulfur dioxide", "density", "pH", "sulphates", "alcohol", "quality"], ";", True)
-
-    perc = Perceptron(white_wine)
+    data = red_wine
+    perc = Perceptron(data)
     print(perc.getDados())
     print(perc.getShape())
 
