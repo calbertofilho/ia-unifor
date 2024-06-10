@@ -53,6 +53,7 @@ def run(inputData: pd.DataFrame) -> None:
     print()
     print(resultados.keys().values[0])
     print(pd.DataFrame(data=resultados.iloc[:]['Perceptron simples'][0], index=["media", "mediana", "minimo", "maximo", "d.padrao"]).T)
+    print()
 
 def close() -> None:
     sys.exit(0)
