@@ -1,5 +1,6 @@
 import os
 import sys
+import platform
 import numpy as num
 import pandas as pd
 import random as rd
@@ -52,8 +53,8 @@ try:
         aerogerador = load_full_data("aerogerador.dat", ["Vel", "Pot"], "\t", False)
         red_wine = load_full_data("winequality-red.csv", ["fixed acidity", "volatile acidity", "citric acid", "residual sugar", "chlorides", "free sulfur dioxide", "total sulfur dioxide", "density", "pH", "sulphates", "alcohol", "quality"], ";", True)
         white_wine = load_full_data("winequality-white.csv", ["fixed acidity", "volatile acidity", "citric acid", "residual sugar", "chlorides", "free sulfur dioxide", "total sulfur dioxide", "density", "pH", "sulphates", "alcohol", "quality"], ";", True)
-        os.system("cls" if (sys.platform in ("win32", "win64")) else "clear")  #'darwin' <- macOS, 'linux', ('win32', 'win64')
-        print(sys.platform)
+        os.system("cls" if (platform.system() == "Windows") else "clear")  # 'Darwin' <- macOS, 'Linux', 'Windows'
+        print(platform.system())
         run(inputData=espiral)
 finally:
     close()
