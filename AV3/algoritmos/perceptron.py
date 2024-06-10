@@ -2,26 +2,63 @@ import numpy as num
 import pandas as pd
 import random as rd
 import matplotlib.pyplot as plot
+from utils.manipulation import shuffleData, partitionData, sign
+num.seterr(divide='ignore', invalid='ignore')
 
 class Perceptron:
-    def __init__(self, data: pd.DataFrame) -> None:
-        self.setDados(data)
+    def __init__(self, tx_apr: float, n_epochs: int) -> None:
+        self.eta = tx_apr
+        self.epocas = n_epochs
+        self.matriz_confusao = num.zeros((2, 2), dtype=int)
 
-    def setDados(self, data: pd.DataFrame) -> None:
-        self.dados = data
+    def treinar(self, X: num.ndarray[float], y: num.ndarray[float]) -> None:
+        N, p = X.shape
+        X = X.T
+        self.X_trn = num.concatenate((-num.ones((1, N)), X))
+        self.y_trn = y
+        erro = True
+        epoca = 0
+        self.W = num.random.rand(p+1, 1)
+        while erro and (epoca < self.epocas):
+            erro = False
+            W_ant = self.W
+            qtd_erros = 0
+            for i in range(N):
+                x_t = self.X_trn[:, i].reshape((p+1, 1))
+                u_t = (self.W.T @ x_t)[0, 0]
+                y_t = sign(u_t)
+                d_t = self.y_trn[i, 0]
+                e_t = int(d_t - y_t)
+                self.W = self.W + (e_t * x_t * self.eta) / 2
+                if y_t != d_t:
+                    erro = True
+                    qtd_erros += 1
+            epoca += 1
 
-    def getDados(self) -> pd.DataFrame:
-        return self.dados
+    def testar(self, X: num.ndarray[float], y: num.ndarray[float]) -> tuple[float, float, float]:
+        N, p = X.shape
+        X = X.T
+        self.X_tst = num.concatenate((-num.ones((1, N)), X))
+        self.y_tst = y
+        for i in range(N):
+            x_t = self.X_tst[:, i].reshape(p+1, 1)
+            u_t = (self.W.T @ x_t)[0, 0]
+            y_t = sign(u_t)
+            d_t = self.y_tst[i, 0]
+            y_real = int(self.y_tst[i][0])
+            y_predito = y_t
+            self.matriz_confusao[0 if (y_predito == -1) else 1, 0 if (y_real == -1) else 1] += 1
+        VN: int = self.matriz_confusao[0, 0]
+        VP: int = self.matriz_confusao[1, 1]
+        FN: int = self.matriz_confusao[0, 1]
+        FP: int = self.matriz_confusao[1, 0]
+        acuracia = 0 if num.isnan((VP + VN) / (VP + VN + FP + FN)) else ((VP + VN) / (VP + VN + FP + FN))
+        sensibilidade = 0 if num.isnan(VP / (VP + FN)) else (VP / (VP + FN))
+        especificidade = 0 if num.isnan(VN / (VN + FP)) else (VN / (VN + FP))
+        return acuracia, sensibilidade, especificidade
 
-    def getShape(self) -> tuple[int, int]:
-        return self.dados.shape
+    def getMatrizConfusao(self) -> num.ndarray[int]:
+        return self.matriz_confusao
 
-    def shuffleDados(self) -> None:
-        self.setDados(self.dados.sample(frac=1).reset_index(drop=True))
-
-    def partitionDados(self, percentual: float) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-        X = self.dados.iloc[:int((self.dados.tail(1).index.item()+1)*percentual), :len(self.dados.axes[1])-1].values
-        y = self.dados.iloc[:int((self.dados.tail(1).index.item()+1)*percentual), len(self.dados.axes[1])-1:].values
-        X_rest = self.dados.iloc[int((self.dados.tail(1).index.item()+1)*percentual):, :len(self.dados.axes[1])-1].values
-        y_rest = self.dados.iloc[int((self.dados.tail(1).index.item()+1)*percentual):, len(self.dados.axes[1])-1:].values
-        return X, X_rest, y, y_rest
+    def getWeights(self) -> num.ndarray[float]:
+        return self.W
