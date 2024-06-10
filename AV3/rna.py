@@ -16,6 +16,7 @@ def run(inputData: pd.DataFrame) -> None:
     rounds = 0
     max_rounds = 100
     rodada = []
+    calculos = []
     while (rounds < max_rounds):
         printProgressBar((rounds / max_rounds) * 100, 'Calculando...')
         ppn = Perceptron(tx_apr=0.001, n_epochs=100)
@@ -37,12 +38,21 @@ def run(inputData: pd.DataFrame) -> None:
         ppn = None
     printProgressBar(100, 'Concluído !!!')
     estatisticas = pd.DataFrame(rodada)
+    calculos.append(
+        {
+            "Perceptron simples":
+                {
+                    "acuracia": [round(num.mean(estatisticas.iloc[:]["acuracia"]), 6), round(num.median(estatisticas.iloc[:]["acuracia"]), 6), round(num.min(estatisticas.iloc[:]["acuracia"]), 6), round(num.max(estatisticas.iloc[:]["acuracia"]), 6), round(num.std(estatisticas.iloc[:]["acuracia"]), 6)],
+                    "especificidade": [round(num.mean(estatisticas.iloc[:]["especificidade"]), 6), round(num.median(estatisticas.iloc[:]["especificidade"]), 6), round(num.min(estatisticas.iloc[:]["especificidade"]), 6), round(num.max(estatisticas.iloc[:]["especificidade"]), 6), round(num.std(estatisticas.iloc[:]["especificidade"]), 6)],
+                    "sensibilidade": [round(num.mean(estatisticas.iloc[:]["sensibilidade"]), 6), round(num.median(estatisticas.iloc[:]["sensibilidade"]), 6), round(num.min(estatisticas.iloc[:]["sensibilidade"]), 6), round(num.max(estatisticas.iloc[:]["sensibilidade"]), 6), round(num.std(estatisticas.iloc[:]["sensibilidade"]), 6)]
+                }
+        }
+    )
+    resultados = pd.DataFrame(calculos)
     print()
-    print(num.mean(estatisticas.iloc[:]["acuracia"]))
-    print(num.median(estatisticas.iloc[:]["acuracia"]))
-    print(num.min(estatisticas.iloc[:]["acuracia"]))
-    print(num.max(estatisticas.iloc[:]["acuracia"]))
-    print(num.std(estatisticas.iloc[:]["acuracia"]))
+    print()
+    print(resultados.keys().values[0])
+    print(pd.DataFrame(data=resultados.iloc[:]['Perceptron simples'][0], index=["media", "mediana", "minimo", "maximo", "d.padrao"]).T)
 
 def close() -> None:
     sys.exit(0)
@@ -56,5 +66,8 @@ try:
         os.system("cls" if (platform.system() == "Windows") else "clear")  # 'Darwin' <- macOS, 'Linux', 'Windows'
         # print(platform.system())
         run(inputData=espiral)
+        # run(inputData=aerogerador)
+        # run(inputData=red_wine)
+        # run(inputData=white_wine)
 finally:
     close()

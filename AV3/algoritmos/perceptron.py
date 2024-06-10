@@ -1,8 +1,5 @@
 import numpy as num
-import pandas as pd
-import random as rd
-import matplotlib.pyplot as plot
-from utils.manipulation import shuffleData, partitionData, sign
+from utils.manipulation import sign
 num.seterr(divide='ignore', invalid='ignore')
 
 class Perceptron:
@@ -21,7 +18,6 @@ class Perceptron:
         self.W = num.random.rand(p+1, 1)
         while erro and (epoca < self.epocas):
             erro = False
-            W_ant = self.W
             qtd_erros = 0
             for i in range(N):
                 x_t = self.X_trn[:, i].reshape((p+1, 1))
@@ -44,7 +40,6 @@ class Perceptron:
             x_t = self.X_tst[:, i].reshape(p+1, 1)
             u_t = (self.W.T @ x_t)[0, 0]
             y_t = sign(u_t)
-            d_t = self.y_tst[i, 0]
             y_real = int(self.y_tst[i][0])
             y_predito = y_t
             self.matriz_confusao[0 if (y_predito == -1) else 1, 0 if (y_real == -1) else 1] += 1
