@@ -16,13 +16,13 @@ class Perceptron(object):
         self.n_iter = n_iter                            # o número de iterações
 
     def sign(self, num): # Função que avalia o output
-        return 1 if (num >= 0.0) else 0
+        return 1 if (num >= 0.0) else -1
 
-    def fit(self, X, y):
+    def training(self, X, y):
         """Esse método é usado para treinar o perceptron.
            x_data: Uma numpy.array contendo as features para treino.
            y_data: Uma numpy.array contendo as classes(target)"""
-        X = np.insert(X[:,], len(X[0]), 1, axis=1)  # acrescentamos o bias ao dataset, no caso, mais uma coluna contendo apenas 1
+        X = np.concatenate((X, np.ones((len(X.T[0]), 1))), axis=1)  # acrescentamos o bias ao dataset, no caso, mais uma coluna contendo apenas 1
         for i in range(self.n_iter):
             print("iteração número:{}".format(i))
             cum_erro = 0                            # Aqui armazenamos o erro acumulado para parar a otimização
@@ -36,17 +36,17 @@ class Perceptron(object):
                 print("Otimização terminada em {} iterações".format(i))
                 break                
 
-    def predict(self,vector):
+    def predict(self, vector):
         """O método predict pode levar uma numpy.array de uma ou duas
            dimensões."""
         if np.ndim(vector) == 1:                        # Avaliamos a quantidade de dimensões.
             vector = np.insert(vector, len(vector), 1)  # inserimos o bias
             prediction = self.sign(self.w.dot(vector))  # Fazemos a predição.
-            return prediction
+            return np.array(prediction)
         else:                                           # Caso contrário é feito o mesmo processo porém com uma array de duas dimensões.
             vector = np.insert(vector[:,], len(vector[0]), 1, axis=1)
             prediction = [self.sign(self.w.dot(x)) for x in vector]
-            return prediction
+            return np.array(prediction)
 
     def showAccuracy(y_true, predictions):
         correct = 0
