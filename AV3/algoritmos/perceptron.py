@@ -8,39 +8,41 @@ class Perceptron:
         self.epocas = n_epochs
         self.matriz_confusao = num.zeros((2, 2), dtype=int)
 
-    def treinar(self, X: num.ndarray[float], y: num.ndarray[float]) -> None:
+    def treinar(self, X: num.ndarray[float], y: num.ndarray[float]) -> num.ndarray[float]:
         N, p = X.shape
         X = X.T
         self.X_trn = num.concatenate((-num.ones((1, N)), X))
         self.y_trn = y
         erro = True
         epoca = 0
-        self.W = num.random.rand(p+1, 1)
+        W = num.random.rand(p+1, 1)
         while erro and (epoca < self.epocas):
             erro = False
-            qtd_erros = 0
             for i in range(N):
                 x_t = self.X_trn[:, i].reshape((p+1, 1))
-                u_t = (self.W.T @ x_t)[0, 0]
+                u_t = (W.T @ x_t)[0, 0]
                 y_t = sign(u_t)
                 d_t = self.y_trn[i, 0]
                 e_t = int(d_t - y_t)
-                self.W = self.W + (e_t * x_t * self.eta) / 2
+                W = W + ((e_t * x_t * self.eta) / 2)
                 if y_t != d_t:
                     erro = True
-                    qtd_erros += 1
             epoca += 1
+        return W
 
-    def testar(self, X: num.ndarray[float], y: num.ndarray[float]) -> tuple[float, float, float]:
+    def testar(self, W: num.ndarray[float], X: num.ndarray[float], y: num.ndarray[float]) -> tuple[float, float, float]:
         N, p = X.shape
         X = X.T
+        eqm = 0
         self.X_tst = num.concatenate((-num.ones((1, N)), X))
         self.y_tst = y
         for i in range(N):
             x_t = self.X_tst[:, i].reshape(p+1, 1)
-            u_t = (self.W.T @ x_t)[0, 0]
+            u_t = (W.T @ x_t)[0, 0]
             y_t = sign(u_t)
-            y_real = int(self.y_tst[i][0])
+            d_t = self.y_tst[i][0]
+            eqm += num.power((d_t - u_t), 2)
+            y_real = int(d_t)
             y_predito = y_t
             self.matriz_confusao[0 if (y_predito == -1) else 1, 0 if (y_real == -1) else 1] += 1
         VN: int = self.matriz_confusao[0, 0]
@@ -50,10 +52,7 @@ class Perceptron:
         acuracia = 0 if num.isnan((VP + VN) / (VP + VN + FP + FN)) else ((VP + VN) / (VP + VN + FP + FN))
         sensibilidade = 0 if num.isnan(VP / (VP + FN)) else (VP / (VP + FN))
         especificidade = 0 if num.isnan(VN / (VN + FP)) else (VN / (VN + FP))
-        return acuracia, sensibilidade, especificidade
+        return acuracia, sensibilidade, especificidade, (eqm / (2 * N))
 
     def getMatrizConfusao(self) -> num.ndarray[int]:
         return self.matriz_confusao
-
-    def getWeights(self) -> num.ndarray[float]:
-        return self.W

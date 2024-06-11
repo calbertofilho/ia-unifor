@@ -22,26 +22,29 @@ def run(inputData: pd.DataFrame) -> None:
         ppn = Perceptron(tx_apr=0.001, n_epochs=100)
         data = shuffleData(inputData)
         X_trn, X_tst, y_trn, y_tst = partitionData(data, 0.8)
-        ppn.treinar(X=X_trn, y=y_trn)
-        a, s, e = ppn.testar(X_tst, y_tst)
+        pesos = ppn.treinar(X=X_trn, y=y_trn)
+        a, s, e, q = ppn.testar(pesos, X_tst, y_tst)
         rodada.append(
             {
                 "rodada": rounds+1,
                 "acuracia": a,
                 "sensibilidade": s,
                 "especificidade": e,
-                "pesos": ppn.getWeights(),
+                "eqm": q,
+                "pesos": pesos,
                 "matriz_confusao": ppn.getMatrizConfusao()
             }
         )
         rounds += 1
-        ppn = None
+        ppn = data = X_trn = X_tst = y_trn = y_tst = pesos = None
+        a = s = e = q = 0
     printProgressBar(100, 'Concluído !!!')
     estatisticas = pd.DataFrame(rodada)
     calculos.append(
         {
             "Perceptron simples":
                 {
+                    "eqm": [round(num.mean(estatisticas.iloc[:]["eqm"]), 6), round(num.median(estatisticas.iloc[:]["eqm"]), 6), round(num.min(estatisticas.iloc[:]["eqm"]), 6), round(num.max(estatisticas.iloc[:]["eqm"]), 6), round(num.std(estatisticas.iloc[:]["eqm"]), 6)],
                     "acuracia": [round(num.mean(estatisticas.iloc[:]["acuracia"]), 6), round(num.median(estatisticas.iloc[:]["acuracia"]), 6), round(num.min(estatisticas.iloc[:]["acuracia"]), 6), round(num.max(estatisticas.iloc[:]["acuracia"]), 6), round(num.std(estatisticas.iloc[:]["acuracia"]), 6)],
                     "especificidade": [round(num.mean(estatisticas.iloc[:]["especificidade"]), 6), round(num.median(estatisticas.iloc[:]["especificidade"]), 6), round(num.min(estatisticas.iloc[:]["especificidade"]), 6), round(num.max(estatisticas.iloc[:]["especificidade"]), 6), round(num.std(estatisticas.iloc[:]["especificidade"]), 6)],
                     "sensibilidade": [round(num.mean(estatisticas.iloc[:]["sensibilidade"]), 6), round(num.median(estatisticas.iloc[:]["sensibilidade"]), 6), round(num.min(estatisticas.iloc[:]["sensibilidade"]), 6), round(num.max(estatisticas.iloc[:]["sensibilidade"]), 6), round(num.std(estatisticas.iloc[:]["sensibilidade"]), 6)]
