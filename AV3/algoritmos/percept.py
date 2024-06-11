@@ -16,7 +16,7 @@ class Perceptron(object):
         self.n_iter = n_iter                            # o número de iterações
 
     def sign(self, num): # Função que avalia o output
-        return 1 if (num >= 0.0) else -1
+        return 1. if (num >= 0.0) else -1.
 
     def training(self, X, y):
         """Esse método é usado para treinar o perceptron.
@@ -42,13 +42,12 @@ class Perceptron(object):
         if np.ndim(vector) == 1:                        # Avaliamos a quantidade de dimensões.
             vector = np.insert(vector, len(vector), 1)  # inserimos o bias
             prediction = self.sign(self.w.dot(vector))  # Fazemos a predição.
-            return np.array(prediction)
         else:                                           # Caso contrário é feito o mesmo processo porém com uma array de duas dimensões.
             vector = np.insert(vector[:,], len(vector[0]), 1, axis=1)
-            prediction = [self.sign(self.w.dot(x)) for x in vector]
-            return np.array(prediction)
+            prediction = [[self.sign(self.w.dot(x))] for x in vector]
+        return np.array(prediction)
 
-    def showAccuracy(y_true, predictions):
+    def showAccuracy(self, y_true, predictions):
         correct = 0
         for x in range(len(y_true)):
             if y_true[x] == predictions[x]:     # Compara os respectivos valores
