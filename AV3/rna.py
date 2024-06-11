@@ -1,15 +1,12 @@
-import os
 import sys
-import platform
 import numpy as num
 import pandas as pd
 import random as rd
 import matplotlib.pyplot as plot
-from pathlib import Path
 from algoritmos.mlp import MLP
 from algoritmos.adaline import Adaline
 from algoritmos.perceptron import Perceptron
-from utils.manipulation import load_full_data, shuffleData, partitionData
+from utils.manipulation import clearScreen, loadData, shuffleData, partitionData
 from utils.progress import printProgressBar, printAnimatedBar
 
 def run(inputData: pd.DataFrame) -> None:
@@ -63,15 +60,17 @@ def close() -> None:
 
 try:
     if __name__ == "__main__":
-        espiral = load_full_data(file_name="spiral.csv", columns=["x1", "x2", "y",], separator=",", ignore_header=False)
-        aerogerador = load_full_data("aerogerador.dat", ["Vel", "Pot"], "\t", False)
-        red_wine = load_full_data("winequality-red.csv", ["fixed acidity", "volatile acidity", "citric acid", "residual sugar", "chlorides", "free sulfur dioxide", "total sulfur dioxide", "density", "pH", "sulphates", "alcohol", "quality"], ";", True)
-        white_wine = load_full_data("winequality-white.csv", ["fixed acidity", "volatile acidity", "citric acid", "residual sugar", "chlorides", "free sulfur dioxide", "total sulfur dioxide", "density", "pH", "sulphates", "alcohol", "quality"], ";", True)
-        os.system("cls" if (platform.system() == "Windows") else "clear")  # 'Darwin' <- macOS, 'Linux', 'Windows'
-        # print(platform.system())
+        espiral = loadData(file_name="spiral.csv", columns=["x1", "x2", "y",], separator=",", ignore_header=False)
+        aerogerador = loadData("aerogerador.dat", ["Vel", "Pot"], "\t", False)
+        red_wine = loadData("winequality-red.csv", ["fixed acidity", "volatile acidity", "citric acid", "residual sugar", "chlorides", "free sulfur dioxide", "total sulfur dioxide", "density", "pH", "sulphates", "alcohol", "quality"], ";", True)
+        white_wine = loadData("winequality-white.csv", ["fixed acidity", "volatile acidity", "citric acid", "residual sugar", "chlorides", "free sulfur dioxide", "total sulfur dioxide", "density", "pH", "sulphates", "alcohol", "quality"], ";", True)
+        clearScreen()
         run(inputData=espiral)
         # run(inputData=aerogerador)
         # run(inputData=red_wine)
         # run(inputData=white_wine)
 finally:
     close()
+
+
+    # EQM = 1/N (y_real - y_predito)²

@@ -8,6 +8,9 @@ class Perceptron:
         self.epocas = n_epochs
         self.matriz_confusao = num.zeros((2, 2), dtype=int)
 
+    def EQM(y_real, y_pred) -> float:
+        return num.square(num.subtract(y_real, y_pred)).mean()
+
     def treinar(self, X: num.ndarray[float], y: num.ndarray[float]) -> num.ndarray[float]:
         N, p = X.shape
         X = X.T
@@ -30,7 +33,7 @@ class Perceptron:
             epoca += 1
         return W
 
-    def testar(self, W: num.ndarray[float], X: num.ndarray[float], y: num.ndarray[float]) -> tuple[float, float, float]:
+    def testar(self, W: num.ndarray[float], X: num.ndarray[float], y: num.ndarray[float]) -> tuple[float, float, float, float]:
         N, p = X.shape
         X = X.T
         eqm = 0
@@ -38,11 +41,11 @@ class Perceptron:
         self.y_tst = y
         for i in range(N):
             x_t = self.X_tst[:, i].reshape(p+1, 1)
-            u_t = (W.T @ x_t)[0, 0]
-            y_t = sign(u_t)
-            d_t = self.y_tst[i][0]
-            eqm += num.power((d_t - u_t), 2)
-            y_real = int(d_t)
+            u_t = (W.T @ x_t)
+            y_t = sign(u_t[0, 0])
+            d_t = self.y_tst
+            eqm += num.square(num.subtract(d_t, u_t))
+            y_real = int(d_t[i][0])
             y_predito = y_t
             self.matriz_confusao[0 if (y_predito == -1) else 1, 0 if (y_real == -1) else 1] += 1
         VN: int = self.matriz_confusao[0, 0]
@@ -52,7 +55,7 @@ class Perceptron:
         acuracia = 0 if num.isnan((VP + VN) / (VP + VN + FP + FN)) else ((VP + VN) / (VP + VN + FP + FN))
         sensibilidade = 0 if num.isnan(VP / (VP + FN)) else (VP / (VP + FN))
         especificidade = 0 if num.isnan(VN / (VN + FP)) else (VN / (VN + FP))
-        return acuracia, sensibilidade, especificidade, (eqm / (2 * N))
+        return acuracia, sensibilidade, especificidade, (eqm / N)
 
     def getMatrizConfusao(self) -> num.ndarray[int]:
         return self.matriz_confusao

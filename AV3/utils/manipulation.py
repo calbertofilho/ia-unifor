@@ -1,15 +1,18 @@
 import os
-import sys
+import platform
 import numpy as num
 import pandas as pd
 import random as rd
 import matplotlib.pyplot as plot
 from pathlib import Path
 
+def clearScreen() -> None:
+    os.system("cls" if (platform.system() == "Windows") else "clear")  # 'Darwin' <- macOS, 'Linux', 'Windows'
+
 def sign(number: float) -> int:
     return 1 if number >= 0 else -1
 
-def load_full_data(file_name: str, columns: list, separator: str, ignore_header: bool) -> pd.DataFrame:
+def loadData(file_name: str, columns: list, separator: str, ignore_header: bool) -> pd.DataFrame:
     os.chdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "dados"))
     if ignore_header:
         return pd.read_csv(file_name, names=columns, sep=separator, skiprows=[0])
