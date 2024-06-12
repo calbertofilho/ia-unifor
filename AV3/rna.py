@@ -19,14 +19,14 @@ def new(inputData: pd.DataFrame) -> None:
     y_predict = percept.predict(X_teste)
     print(percept.showAccuracy(y_teste, y_predict))
 
-def run(inputData: pd.DataFrame) -> None:
+def run(inputData: pd.DataFrame, regressao: bool) -> None:
     rounds = 0
     max_rounds = 100
     rodada = []
     calculos = []
     while (rounds < max_rounds):
         printProgressBar((rounds / max_rounds) * 100, 'Calculando...')
-        ppn = Perc(tx_apr=0.001, n_epochs=100)
+        ppn = Perc(tx_apr=0.001, n_epochs=10, regr=regressao)
         data = shuffleData(inputData)
         X_trn, X_tst, y_trn, y_tst = partitionData(data, 0.8)
         pesos = ppn.treinar(X=X_trn, y=y_trn)
@@ -70,6 +70,7 @@ def start(inputData: pd.DataFrame) -> None:
     X_treino, X_teste, y_treino, y_teste = partitionData(data, 0.8)             # Particiona os dados no percentual proposto
     percep = Perceptron()
     pesos = percep.treinamento(X_treino, y_treino)
+    print("pesos =", pesos)
 
 def close() -> None:
     sys.exit(0)
@@ -81,14 +82,14 @@ try:
         red_wine = loadData("winequality-red.csv", ["fixed acidity", "volatile acidity", "citric acid", "residual sugar", "chlorides", "free sulfur dioxide", "total sulfur dioxide", "density", "pH", "sulphates", "alcohol", "quality"], ";", True)
         white_wine = loadData("winequality-white.csv", ["fixed acidity", "volatile acidity", "citric acid", "residual sugar", "chlorides", "free sulfur dioxide", "total sulfur dioxide", "density", "pH", "sulphates", "alcohol", "quality"], ";", True)
         clearScreen()
-        # run(inputData=espiral)
-        # run(inputData=aerogerador)
-        # run(inputData=red_wine)
-        # run(inputData=white_wine)
+        run(inputData=espiral, regressao=False)
+        # run(inputData=aerogerador, regressao=True)
+        # run(inputData=red_wine, regressao=True)
+        # run(inputData=white_wine, regressao=True)
         # new(inputData=espiral)
-        start(inputData=espiral)
+        #start(inputData=espiral)
 finally:
     close()
 
 
-    # EQM = 1/N (y_real - y_predito)²
+    # EQM = 1/N * (y_real - y_predito)²
