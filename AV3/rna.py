@@ -3,10 +3,11 @@ import numpy as num
 import pandas as pd
 import random as rd
 import matplotlib.pyplot as plot
-from algoritmos.mlp import MLP
-from algoritmos.adaline import Adaline
-from algoritmos.perceptron import Perceptron
-from algoritmos.percept import Perceptron as Percept
+from classificadores.mlp import MLP
+from classificadores.adaline import Adaline
+from classificadores.perceptron import Perceptron
+from classificadores.perceptron1 import Perceptron as Perc
+from classificadores.percept import Perceptron as Percept
 from utils.manipulation import clearScreen, loadData, shuffleData, partitionData
 from utils.progress import printProgressBar, printAnimatedBar
 
@@ -25,7 +26,7 @@ def run(inputData: pd.DataFrame) -> None:
     calculos = []
     while (rounds < max_rounds):
         printProgressBar((rounds / max_rounds) * 100, 'Calculando...')
-        ppn = Perceptron(tx_apr=0.001, n_epochs=100)
+        ppn = Perc(tx_apr=0.001, n_epochs=100)
         data = shuffleData(inputData)
         X_trn, X_tst, y_trn, y_tst = partitionData(data, 0.8)
         pesos = ppn.treinar(X=X_trn, y=y_trn)
@@ -64,6 +65,12 @@ def run(inputData: pd.DataFrame) -> None:
     print(pd.DataFrame(data=resultados.iloc[:]['Perceptron simples'][0], index=["media", "mediana", "minimo", "maximo", "d.padrao"]).T)
     print()
 
+def start(inputData: pd.DataFrame) -> None:
+    data = shuffleData(inputData)                                               # Embaralha os dados
+    X_treino, X_teste, y_treino, y_teste = partitionData(data, 0.8)             # Particiona os dados no percentual proposto
+    percep = Perceptron()
+    pesos = percep.treinamento(X_treino, y_treino)
+
 def close() -> None:
     sys.exit(0)
 
@@ -74,11 +81,12 @@ try:
         red_wine = loadData("winequality-red.csv", ["fixed acidity", "volatile acidity", "citric acid", "residual sugar", "chlorides", "free sulfur dioxide", "total sulfur dioxide", "density", "pH", "sulphates", "alcohol", "quality"], ";", True)
         white_wine = loadData("winequality-white.csv", ["fixed acidity", "volatile acidity", "citric acid", "residual sugar", "chlorides", "free sulfur dioxide", "total sulfur dioxide", "density", "pH", "sulphates", "alcohol", "quality"], ";", True)
         clearScreen()
-        run(inputData=espiral)
+        # run(inputData=espiral)
         # run(inputData=aerogerador)
         # run(inputData=red_wine)
         # run(inputData=white_wine)
         # new(inputData=espiral)
+        start(inputData=espiral)
 finally:
     close()
 

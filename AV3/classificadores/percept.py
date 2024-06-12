@@ -24,7 +24,6 @@ class Perceptron(object):
            y_data: Uma numpy.array contendo as classes(target)"""
         X = np.concatenate((X, np.ones((len(X.T[0]), 1))), axis=1)  # acrescentamos o bias ao dataset, no caso, mais uma coluna contendo apenas 1
         for i in range(self.n_iter):
-            print("iteração número:{}".format(i))
             cum_erro = 0                            # Aqui armazenamos o erro acumulado para parar a otimização
             for j in range(len(X)):
                 output = self.w.dot(X[j])           # O output é o produto dos pesos pela linha atual
@@ -33,7 +32,6 @@ class Perceptron(object):
                     erro = y[j] - output            # medimos o erro da iteração de forma direta.(sem loss)
                     self.w += self.alpha*erro*X[j]  # Aqui os pesos são atualizados
             if cum_erro == 0:                       # Aqui avaliamos o erro acumulado caso sejá 0 para o treinamento.
-                print("Otimização terminada em {} iterações".format(i))
                 break                
 
     def predict(self, vector):
