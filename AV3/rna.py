@@ -5,7 +5,6 @@ import random as rd
 import matplotlib.pyplot as plot
 from classificadores.mlp import MultilayerPerceptron as MLP
 from classificadores.adaline import Adaline as Ada
-from classificadores.perceptron_old import Perceptron as Perc
 from classificadores.perceptron import Perceptron
 from utils.manipulation import clearScreen, loadData, shuffleData, partitionData
 from utils.progress import printProgressBar, printAnimatedBar
@@ -121,7 +120,7 @@ try:
         aerogerador = loadData("aerogerador.dat", ["Vel", "Pot"], "\t", False)
         red_wine = loadData("winequality-red.csv", ["fixed acidity", "volatile acidity", "citric acid", "residual sugar", "chlorides", "free sulfur dioxide", "total sulfur dioxide", "density", "pH", "sulphates", "alcohol", "quality"], ";", True)
         white_wine = loadData("winequality-white.csv", ["fixed acidity", "volatile acidity", "citric acid", "residual sugar", "chlorides", "free sulfur dioxide", "total sulfur dioxide", "density", "pH", "sulphates", "alcohol", "quality"], ";", True)
-        percecptron = Perceptron(tx_aprendizado=0.001, n_iteracoes=10)          # Inicia o classificador com a taxa de aprendizado e o número de épocas para iterações
+        percecptron = Perceptron(tx_aprendizado=0.001, n_iteracoes=100)         # Inicia o classificador com a taxa de aprendizado e o número de épocas para iterações
         clearScreen()
         run(inputData=espiral, algoritmo=percecptron)
         # run(inputData=aerogerador, algoritmo=percecptron)
