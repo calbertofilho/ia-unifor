@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 
 # https://medium.com/ensina-ai/rede-neural-perceptron-adaline-8f69dc419d4e
+# https://sebastianraschka.com/faq/docs/diff-perceptron-adaline-neuralnet.html
 
 class Adaline(object):
     def __init__(self, tx_aprendizado = 0.001, n_iteracoes = 100):
@@ -34,7 +35,11 @@ class Adaline(object):
         return self.pesos
 
     def gerarMatrizConfusao(self, y_real: np.ndarray[int], y_predito: np.ndarray[int]) -> pd.DataFrame:
-        return
+        df = pd.DataFrame({
+            "y_teste": y_real,
+            "y_predito": y_predito
+        })
+        return pd.crosstab(df["y_teste"], df["y_predito"], rownames=["Real"], colnames=["Previsto"])
 
     def calcularEQM(self, y_real: np.ndarray[int], y_predito: np.ndarray[int]) -> float:
         return

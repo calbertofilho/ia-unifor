@@ -15,7 +15,7 @@ def run(inputData: pd.DataFrame, algoritmo: object) -> None:
     dados_rodada = []                                                           # Coleta de dados de cada rodada
     calculos = []                                                               # Armazena os cálculos
     classificador = algoritmo                                                   # Algoritmo que vai executar a classificação
-    print("Fonte de dados:", inputData.Name)
+    nomeClassificador = algoritmo.__class__.__name__
     while (rodada < rodadas):
         printProgressBar((rodada / rodadas) * 100, 'Calculando...')
         data = shuffleData(inputData)                                           # Embaralha os dados
@@ -54,59 +54,54 @@ def run(inputData: pd.DataFrame, algoritmo: object) -> None:
     printProgressBar(100, 'Concluído !!!')
     dados = pd.DataFrame(dados_rodada)                                          # Organiza os dados para manipulação
     if "acuracia" in dados.columns:                                             # Se encontrar a coluna 'acuracia' no DataFrame, pega os dados referente a classificação
-        calculos.append(
-            {
-                "Perceptron simples":
-                    {
-                        "eqm": [
-                            "{:.4f}".format(num.mean(dados.iloc[:]["eqm"])),
-                            "{:.4f}".format(num.median(dados.iloc[:]["eqm"])),
-                            "{:.4f}".format(num.min(dados.iloc[:]["eqm"])),
-                            "{:.4f}".format(num.max(dados.iloc[:]["eqm"])),
-                            "{:.4f}".format(num.std(dados.iloc[:]["eqm"]))
-                        ],
-                        "acuracia": [
-                            "{:.4f}".format(num.mean(dados.iloc[:]["acuracia"])),
-                            "{:.4f}".format(num.median(dados.iloc[:]["acuracia"])),
-                            "{:.4f}".format(num.min(dados.iloc[:]["acuracia"])),
-                            "{:.4f}".format(num.max(dados.iloc[:]["acuracia"])),
-                            "{:.4f}".format(num.std(dados.iloc[:]["acuracia"]))
-                        ],
-                        "especificidade": [
-                            "{:.4f}".format(num.mean(dados.iloc[:]["especificidade"])),
-                            "{:.4f}".format(num.median(dados.iloc[:]["especificidade"])),
-                            "{:.4f}".format(num.min(dados.iloc[:]["especificidade"])),
-                            "{:.4f}".format(num.max(dados.iloc[:]["especificidade"])),
-                            "{:.4f}".format(num.std(dados.iloc[:]["especificidade"]))
-                        ],
-                        "sensibilidade": [
-                            "{:.4f}".format(num.mean(dados.iloc[:]["sensibilidade"])),
-                            "{:.4f}".format(num.median(dados.iloc[:]["sensibilidade"])),
-                            "{:.4f}".format(num.min(dados.iloc[:]["sensibilidade"])),
-                            "{:.4f}".format(num.max(dados.iloc[:]["sensibilidade"])),
-                            "{:.4f}".format(num.std(dados.iloc[:]["sensibilidade"]))
-                        ]
-                    }
+        calculos.append({
+            nomeClassificador: {
+                "eqm": [
+                    "{:.4f}".format(num.mean(dados.iloc[:]["eqm"])),
+                    "{:.4f}".format(num.median(dados.iloc[:]["eqm"])),
+                    "{:.4f}".format(num.min(dados.iloc[:]["eqm"])),
+                    "{:.4f}".format(num.max(dados.iloc[:]["eqm"])),
+                    "{:.4f}".format(num.std(dados.iloc[:]["eqm"]))
+                ],
+                "acuracia": [
+                    "{:.4f}".format(num.mean(dados.iloc[:]["acuracia"])),
+                    "{:.4f}".format(num.median(dados.iloc[:]["acuracia"])),
+                    "{:.4f}".format(num.min(dados.iloc[:]["acuracia"])),
+                    "{:.4f}".format(num.max(dados.iloc[:]["acuracia"])),
+                    "{:.4f}".format(num.std(dados.iloc[:]["acuracia"]))
+                ],
+                "especificidade": [
+                    "{:.4f}".format(num.mean(dados.iloc[:]["especificidade"])),
+                    "{:.4f}".format(num.median(dados.iloc[:]["especificidade"])),
+                    "{:.4f}".format(num.min(dados.iloc[:]["especificidade"])),
+                    "{:.4f}".format(num.max(dados.iloc[:]["especificidade"])),
+                    "{:.4f}".format(num.std(dados.iloc[:]["especificidade"]))
+                ],
+                "sensibilidade": [
+                    "{:.4f}".format(num.mean(dados.iloc[:]["sensibilidade"])),
+                    "{:.4f}".format(num.median(dados.iloc[:]["sensibilidade"])),
+                    "{:.4f}".format(num.min(dados.iloc[:]["sensibilidade"])),
+                    "{:.4f}".format(num.max(dados.iloc[:]["sensibilidade"])),
+                    "{:.4f}".format(num.std(dados.iloc[:]["sensibilidade"]))
+                ]
             }
-        )
+        })
     else:                                                                       # Se não encontrar, pega os dados referente a regressão
-        calculos.append(
-            {
-                "Perceptron simples":
-                    {
-                        "eqm": [
-                            "{:.4f}".format(num.mean(dados.iloc[:]["eqm"])),
-                            "{:.4f}".format(num.median(dados.iloc[:]["eqm"])),
-                            "{:.4f}".format(num.min(dados.iloc[:]["eqm"])),
-                            "{:.4f}".format(num.max(dados.iloc[:]["eqm"])),
-                            "{:.4f}".format(num.std(dados.iloc[:]["eqm"]))
-                        ]
-                    }
+        calculos.append({
+            nomeClassificador: {
+                "eqm": [
+                    "{:.4f}".format(num.mean(dados.iloc[:]["eqm"])),
+                    "{:.4f}".format(num.median(dados.iloc[:]["eqm"])),
+                    "{:.4f}".format(num.min(dados.iloc[:]["eqm"])),
+                    "{:.4f}".format(num.max(dados.iloc[:]["eqm"])),
+                    "{:.4f}".format(num.std(dados.iloc[:]["eqm"]))
+                ]
             }
-        )
+        })
+    print("\n\nFonte de dados:\n", inputData.Name)
     resultados = pd.DataFrame(calculos)
-    print("\n\nResultados:\n", resultados.keys().values[0])
-    print(pd.DataFrame(data=resultados.iloc[:]['Perceptron simples'][0], index=["media", "mediana", "minimo", "maximo", "d.padrao"]).T)
+    print("\nResultados:\n", resultados.keys().values[0])
+    print(pd.DataFrame(data=resultados.iloc[:][nomeClassificador][0], index=["media", "mediana", "minimo", "maximo", "d.padrao"]).T)
     # print("dados_rodada\n", dados_rodada)
     # print("dados\n", dados)
     # print("calculos\n", calculos)
@@ -127,7 +122,7 @@ try:
         white_wine = loadData("winequality-white.csv", ["fixed acidity", "volatile acidity", "citric acid", "residual sugar", "chlorides", "free sulfur dioxide", "total sulfur dioxide", "density", "pH", "sulphates", "alcohol", "quality"], ";", True)
         white_wine.Name = "white_wine"
         # Inicialização dos classificadores com as taxas de aprendizado e o número de épocas para iterações de cada um
-        percecptron = Perceptron(tx_aprendizado=0.001, n_iteracoes=100)
+        percecptron = Perceptron(tx_aprendizado=0.001, n_iteracoes=10)
         adaline = Adaline(tx_aprendizado=0.0001, n_iteracoes=100)
         clearScreen()
         # Perceptron
