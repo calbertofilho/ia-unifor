@@ -9,9 +9,6 @@ from pathlib import Path
 def clearScreen() -> None:
     os.system("cls" if (platform.system() == "Windows") else "clear")  # 'Darwin' <- macOS, 'Linux', 'Windows'
 
-def sign(number: float) -> int:
-    return 1 if number >= 0 else -1
-
 def loadData(file_name: str, columns: list, separator: str, ignore_header: bool) -> pd.DataFrame:
     os.chdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "dados"))
     if ignore_header:

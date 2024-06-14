@@ -1,6 +1,5 @@
-import numpy as num
-from utils.manipulation import sign
-num.seterr(divide='ignore', invalid='ignore')
+import numpy as np
+import pandas as pd
 
 # Dados
 #       -8.22173   -0.95343    1.00000
@@ -29,81 +28,74 @@ num.seterr(divide='ignore', invalid='ignore')
 
 # EQM = 1/(2*N) * (y_real - y_predito)²
 
-class Perceptron:
-    def __init__(self, tx_apr: float, n_epochs: int) -> None:
-        self.eta = tx_apr
-        self.epocas = n_epochs
-        self.matriz_confusao = num.zeros((2, 2), dtype=int)
+class Perceptron(object):
 
-    def EQM(self, y_real, y_pred) -> float:
-        return num.square(num.subtract(y_real, y_pred)).mean()
+    def __init__(self, tx_aprendizado = 0.001, n_iteracoes = 100):
+        # Construtor da classe
+        self.eta = tx_aprendizado
+        self.epocas = n_iteracoes
+        self.pesos = None
+        self.bias = None
 
-    def treinamento(self, X: num.ndarray[float], y: num.ndarray[float]) -> num.ndarray[float]:
-        N, p = X.shape
-        X = X.T
-        self.X_trn = num.concatenate((-num.ones((1, N)), X))
-        self.y_trn = y
+    def ativacao(self, valor_entrada):
+        # Função de ativação
+        return np.where(valor_entrada >= 0, 1, -1)
+
+    def treinamento(self, X, y):
+        # Funcao de treinamento
         erro = True
         epoca = 0
-        # print("\nN =", N)
-        # print("p =", p)
-        # print("X =", X)
-        # print("X_t\n", self.X_trn)
-        # print("d\n", self.y_trn)
-        W = num.random.rand(p+1, 1)
+        qtde_amostras, qtde_caracteristicas = X.shape
+        self.pesos = np.random.uniform(size = qtde_caracteristicas, low = -0.5, high = 0.5)
+        # print("pesos =", self.pesos)
+        self.bias = -1
         while erro and (epoca < self.epocas):
             erro = False
-            for i in range(N):
-                x_t = self.X_trn[:, i].reshape((p+1, 1))
-                u_t = (W.T @ x_t)
-                y_t = sign(u_t)
-                d_t = self.y_trn[i]
-                e_t = int(d_t - y_t)
-                W = W + ((e_t * x_t * self.eta) / 2)
-                if y_t != d_t:
+            for indice, caracteristicas in enumerate(X):
+                resultado = np.dot(caracteristicas, self.pesos) + self.bias
+                y_predito = self.ativacao(resultado)
+                self._atualiza_pesos(caracteristicas, y[indice], y_predito)
+                # print("indice =", indice)
+                # print("u_t =", resultado)
+                # print("y_t =", y_predito)
+                if y_predito != y[indice]:
                     erro = True
-                # print("k =", i)
-                # print("xᵏ_t\n", x_t)
-                # print("uᵏ_t =", u_t)
-                # print("yᵏ_t =", y_t)
-                # print("dᵏ_t =", d_t)
-                # print("eᵏ_t =", e_t)
-                # print("Wᵏ\n", W)
             epoca += 1
-        return W
 
-    def predicao(self, W: num.ndarray[float], X: num.ndarray[float], y: num.ndarray[float]) -> tuple[float, float, float, float]:
-        N, p = X.shape
-        X = X.T
-        regressao = (len(num.unique(y)) != 2)
-        eqm = 0
-        self.X_tst = num.concatenate((-num.ones((1, N)), X))
-        self.y_tst = y
-        for i in range(N):
-            x_t = self.X_tst[:, i].reshape(p+1, 1)
-            u_t = (W.T @ x_t)
-            y_t = sign(u_t)
-            d_t = self.y_tst
-            if regressao:
-                 eqm += self.EQM(d_t, u_t)
-            else:
-                y_real = int(d_t[i][0])
-                y_predito = y_t
-                self.matriz_confusao[0 if (y_predito == -1) else 1, 0 if (y_real == -1) else 1] += 1
-        if regressao:
-            acuracia = 0
-            sensibilidade = 0
-            especificidade = 0
-        else:
-            VN: int = self.matriz_confusao[0, 0]
-            VP: int = self.matriz_confusao[1, 1]
-            FN: int = self.matriz_confusao[0, 1]
-            FP: int = self.matriz_confusao[1, 0]
-            acuracia = 0 if num.isnan((VP + VN) / (VP + VN + FP + FN)) else ((VP + VN) / (VP + VN + FP + FN))
-            sensibilidade = 0 if num.isnan(VP / (VP + FN)) else (VP / (VP + FN))
-            especificidade = 0 if num.isnan(VN / (VN + FP)) else (VN / (VN + FP))
-            eqm = 0
-        return acuracia, sensibilidade, especificidade, (eqm / (2*N))
+    def _atualiza_pesos(self, amostra, y_atl, y_pred):
+        # Funcao que atualiza os pesos
+        erro = y_atl - y_pred
+        correcao = self.eta * erro
+        self.pesos += correcao * amostra
+        #self.bias += correcao
+        # print("e_t =", erro)
+        # print("correcao =", correcao)
+        # print("pesos =", self.pesos)
+        # print("bias =", self.bias)
 
-    def getMatrizConfusao(self) -> num.ndarray[int]:
-        return self.matriz_confusao
+    def predicao(self, amostras_teste):
+        # Funcao de teste
+        resultado = np.dot(amostras_teste, self.pesos) + self.bias
+        y_predito = self.ativacao(resultado)
+        return y_predito
+
+    def getPesos(self) -> np.ndarray[float]:
+        return self.pesos
+
+    def gerarMatrizConfusao(self, y_real: np.ndarray[int], y_predito: np.ndarray[int]) -> pd.DataFrame:
+        #  Previsto  -->  -1   1    |    VP    [0, 0]  Verdadeiro positivo
+        #  Real                     |    VN    [1, 1]  Verdadeiro negativo
+        #     |     -1    VP  FN    |    FN    [0, 1]  Falso negativo
+        #     V      1    FP  VN    |    FP    [1, 0]  Falso positivo
+        # res = np.zeros((2, 2), dtype=int)
+        # for a, p in zip(y_real, y_predito):
+        #     res[a][p] += 1
+        # return res
+        df = pd.DataFrame({
+            "y_teste": y_real,
+            "y_predito": y_predito
+        })
+        return pd.crosstab(df["y_teste"], df["y_predito"], rownames=["Real"], colnames=["Previsto"])
+
+    def calcularEQM(self, y_real: np.ndarray[int], y_predito: np.ndarray[int]) -> float:
+        return np.square(np.subtract(y_real, y_predito)).mean() / (2 * len(y_real))
