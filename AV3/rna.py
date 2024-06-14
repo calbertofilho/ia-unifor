@@ -4,7 +4,7 @@ import pandas as pd
 import random as rd
 import matplotlib.pyplot as plot
 from classificadores.mlp import MultilayerPerceptron as MLP
-from classificadores.adaline import Adaline as Ada
+from classificadores.adaline import Adaline
 from classificadores.perceptron import Perceptron
 from utils.manipulation import clearScreen, loadData, shuffleData, partitionData
 from utils.progress import printProgressBar, printAnimatedBar
@@ -15,6 +15,7 @@ def run(inputData: pd.DataFrame, algoritmo: object) -> None:
     dados_rodada = []                                                           # Coleta de dados de cada rodada
     calculos = []                                                               # Armazena os cálculos
     classificador = algoritmo                                                   # Algoritmo que vai executar a classificação
+    print("Fonte de dados:", inputData.Name)
     while (rodada < rodadas):
         printProgressBar((rodada / rodadas) * 100, 'Calculando...')
         data = shuffleData(inputData)                                           # Embaralha os dados
@@ -104,7 +105,7 @@ def run(inputData: pd.DataFrame, algoritmo: object) -> None:
             }
         )
     resultados = pd.DataFrame(calculos)
-    print("\n\n", resultados.keys().values[0])
+    print("\n\nResultados:\n", resultados.keys().values[0])
     print(pd.DataFrame(data=resultados.iloc[:]['Perceptron simples'][0], index=["media", "mediana", "minimo", "maximo", "d.padrao"]).T)
     # print("dados_rodada\n", dados_rodada)
     # print("dados\n", dados)
@@ -116,15 +117,28 @@ def close() -> None:
 
 try:
     if __name__ == "__main__":
+        # Carregando os dados
         espiral = loadData(file_name="spiral.csv", columns=["x1", "x2", "y",], separator=",", ignore_header=False)
+        espiral.Name = "espiral"
         aerogerador = loadData("aerogerador.dat", ["Vel", "Pot"], "\t", False)
+        aerogerador.Name = "aerogerador"
         red_wine = loadData("winequality-red.csv", ["fixed acidity", "volatile acidity", "citric acid", "residual sugar", "chlorides", "free sulfur dioxide", "total sulfur dioxide", "density", "pH", "sulphates", "alcohol", "quality"], ";", True)
+        red_wine.Name = "red_wine"
         white_wine = loadData("winequality-white.csv", ["fixed acidity", "volatile acidity", "citric acid", "residual sugar", "chlorides", "free sulfur dioxide", "total sulfur dioxide", "density", "pH", "sulphates", "alcohol", "quality"], ";", True)
-        percecptron = Perceptron(tx_aprendizado=0.001, n_iteracoes=100)         # Inicia o classificador com a taxa de aprendizado e o número de épocas para iterações
+        white_wine.Name = "white_wine"
+        # Inicialização dos classificadores com as taxas de aprendizado e o número de épocas para iterações de cada um
+        percecptron = Perceptron(tx_aprendizado=0.001, n_iteracoes=100)
+        adaline = Adaline(tx_aprendizado=0.0001, n_iteracoes=100)
         clearScreen()
+        # Perceptron
         run(inputData=espiral, algoritmo=percecptron)
         # run(inputData=aerogerador, algoritmo=percecptron)
         # run(inputData=red_wine, algoritmo=percecptron)
         # run(inputData=white_wine, algoritmo=percecptron)
+        # Adaline
+        # run(inputData=espiral, algoritmo=adaline)
+        # run(inputData=aerogerador, algoritmo=adaline)
+        # run(inputData=red_wine, algoritmo=adaline)
+        # run(inputData=white_wine, algoritmo=adaline)
 finally:
     close()

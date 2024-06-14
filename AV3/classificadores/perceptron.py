@@ -15,7 +15,7 @@ import pandas as pd
 #   X2    -0.95343    4.79365   11.14205
 # y.T         d          d²         d³
 #   d_t    1.00000    1.00000   -1.00000
-# 
+#
 # xˈ = [-1.00000  -8.22173  -0.95343]; com d  =  1.00000
 # x² = [-1.00000   1.05714   4.79365]; com d² =  1.00000
 # x³ = [-1.00000  -7.40609  11.14205]; com d³ = -1.00000
@@ -25,11 +25,10 @@ import pandas as pd
 # y = sinal(u)
 # se y != dᵏ
 #   W += ƞ(dᵏ - y)xᵏ
-
+#
 # EQM = 1/(2*N) * (y_real - y_predito)²
 
 class Perceptron(object):
-
     def __init__(self, tx_aprendizado = 0.001, n_iteracoes = 100):
         # Construtor da classe
         self.eta = tx_aprendizado
@@ -46,7 +45,7 @@ class Perceptron(object):
         erro = True
         epoca = 0
         qtde_amostras, qtde_caracteristicas = X.shape
-        self.pesos = np.random.uniform(size = qtde_caracteristicas, low = -0.5, high = 0.5)
+        self.pesos = np.random.uniform(size = qtde_caracteristicas, low = -1, high = 1)
         # print("pesos =", self.pesos)
         self.bias = -1
         while erro and (epoca < self.epocas):
@@ -73,7 +72,7 @@ class Perceptron(object):
         # print("pesos =", self.pesos)
         # print("bias =", self.bias)
 
-    def predicao(self, amostras_teste):
+    def predicao(self, amostras_teste) -> int:
         # Funcao de teste
         resultado = np.dot(amostras_teste, self.pesos) + self.bias
         y_predito = self.ativacao(resultado)
