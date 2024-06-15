@@ -106,6 +106,11 @@ def run(inputData: pd.DataFrame, algoritmo: object) -> None:
     # print("dados\n", dados)
     # print("calculos\n", calculos)
     # print("resultados\n", resultados)
+    plot.plot(adaline.getCustos()[::-1])
+    plot.title('Convergência')
+    plot.ylabel('Erros')
+    plot.xlabel('Épocas')
+    plot.savefig('custos-%s_%s.png' % (nomeClassificador, inputData.Name))
 
 def close() -> None:
     sys.exit(0)
@@ -123,7 +128,7 @@ try:
         white_wine.Name = "white_wine"
         # Inicialização dos classificadores com as taxas de aprendizado e o número de épocas para iterações de cada um
         percecptron = Perceptron(tx_aprendizado=0.001, n_iteracoes=100)
-        adaline = Adaline(tx_aprendizado=0.0001, n_iteracoes=100)
+        adaline = Adaline(tx_aprendizado=0.0001, n_iteracoes=10)
         clearScreen()
         # Perceptron
         # run(inputData=espiral, algoritmo=percecptron)
@@ -135,13 +140,6 @@ try:
         # run(inputData=aerogerador, algoritmo=adaline)
         # run(inputData=red_wine, algoritmo=adaline)
         # run(inputData=white_wine, algoritmo=adaline)
-        plot.plot(adaline.getCustos())
-        plot.title('Convergência')
-        plot.ylabel('Erros')
-        plot.xlabel('Épocas')
-        # if savefig:
-        #     plot.savefig('custos.png')
-        plot.show()
 
 finally:
     close()
