@@ -8,26 +8,36 @@ from classificadores.classificador import Classificador
 #   ajusta_pesos()
 
 class MultilayerPerceptron(Classificador):
-    def __init__(self, tx_aprendizado = 0.0001, n_iteracoes = 100):
+    def __init__(self, tx_aprendizado = 0.0001, n_iteracoes = 100, n_camadas = 3):
         # Construtor da classe
         self.eta = tx_aprendizado
         self.epocas = n_iteracoes
+        self.camadas_escondidas = n_camadas
 
     def ativacao(self, amostras):
         # Função de ativação
         return 
 
-    def _propagation(self, X, y):
-        ...
+    def _forward(self, X):
+        # Funcao que propaga os dados na rede
+        passo = []
+        for i in range(self.camadas_escondidas):
+            passo[i] = self._forward(X)
+        return passo[self.camadas_escondidas]
 
-    def _back(self):
+    def _backward(self, y, step):
+        # Funcao que retorna na rede ajustando os pesos
+        for indice, rotulos in enumerate(y):
+            self.pesos = np.dot(..., y)
+            resultado = np.dot(rotulos, self.weights.T)
         ...
+        return resultado
 
     def treinamento(self, X, y) -> None:
         # Funcao de treinamento
         for _ in range(self.epocas):
             for indice, caracteristicas in enumerate(X):
-                self._propagation(caracteristicas, y[indice])
+                output = self._propagation(caracteristicas, y[indice])
         ...
 
     def predicao(self, amostras_teste):
