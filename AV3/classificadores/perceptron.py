@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from classificadores.classificador import Classificador
 
 # Dados
 #       -8.22173   -0.95343    1.00000
@@ -28,53 +29,43 @@ import pandas as pd
 #
 # EQM = 1/(2*N) * (y_real - y_predito)²
 
-class Perceptron(object):
-    def __init__(self, tx_aprendizado = 0.001, n_iteracoes = 100):
+class Perceptron(Classificador):
+    def __init__(self, tx_aprendizado = 0.01, n_iteracoes = 100):
         # Construtor da classe
         self.eta = tx_aprendizado
         self.epocas = n_iteracoes
-        self.pesos = None
-        self.bias = None
 
     def ativacao(self, valor_entrada):
         # Função de ativação
         return np.where(valor_entrada >= 0, 1, -1)
 
-    def treinamento(self, X, y):
+    def treinamento(self, X, y) -> int:
         # Funcao de treinamento
-        erro = True
-        epoca = 0
         qtde_amostras, qtde_caracteristicas = X.shape
-        self.pesos = np.random.uniform(size = qtde_caracteristicas, low = -1, high = 1)
-        # print("pesos =", self.pesos)
-        self.bias = -1
-        while erro and (epoca < self.epocas):
-            erro = False
-            for indice, caracteristicas in enumerate(X):
-                resultado = np.dot(caracteristicas, self.pesos) + self.bias
-                y_predito = self.ativacao(resultado)
-                self._atualiza_pesos(caracteristicas, y[indice], y_predito)
-                # print("indice =", indice)
-                # print("u_t =", resultado)
-                # print("y_t =", y_predito)
-                if y_predito != y[indice]:
-                    erro = True
-            epoca += 1
-
-    def _atualiza_pesos(self, amostra, y_atl, y_pred):
-        # Funcao que atualiza os pesos
-        erro = y_atl - y_pred
-        correcao = self.eta * erro
-        self.pesos += correcao * amostra
-        #self.bias += correcao
-        # print("e_t =", erro)
-        # print("correcao =", correcao)
-        # print("pesos =", self.pesos)
-        # print("bias =", self.bias)
+        X1 = np.append(np.ones(qtde_amostras).reshape(qtde_amostras, 1), X, axis = 1)
+        self.pesos = np.random.uniform(size = qtde_caracteristicas + 1, low = -1, high = 1)
+        final = self.epocas
+        custo = 0
+        self.custos = []
+        for epoca in range(self.epocas):
+            concluido = False
+            for indice, caracteristicas in enumerate(X1):
+                resultado = np.dot(caracteristicas, self.pesos) * y[indice]
+                if resultado <= 0:
+                    custo += resultado
+                    self.pesos += self.eta * caracteristicas * y[indice]
+                    concluido = False
+            self.custos.append(custo * -1)
+            if concluido:
+                final = epoca+1
+                break
+        return final
 
     def predicao(self, amostras_teste) -> int:
         # Funcao de teste
-        resultado = np.dot(amostras_teste, self.pesos) + self.bias
+        qtde_amostras, _ = amostras_teste.shape
+        X = np.append(np.ones(qtde_amostras).reshape(qtde_amostras, 1), amostras_teste, axis = 1)
+        resultado = np.dot(X, self.pesos)
         y_predito = self.ativacao(resultado)
         return y_predito
 
@@ -100,4 +91,4 @@ class Perceptron(object):
         return np.square(np.subtract(y_real, y_predito)).mean() / (2 * len(y_real))
 
     def getCustos(self):
-        return
+        return self.custos

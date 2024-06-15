@@ -1,13 +1,15 @@
+import os
 import sys
 import numpy as num
 import pandas as pd
-import random as rd
 import matplotlib.pyplot as plot
-from classificadores.mlp import MultilayerPerceptron as MLP
+from classificadores.mlp import MultilayerPerceptron
 from classificadores.adaline import Adaline
 from classificadores.perceptron import Perceptron
 from utils.manipulation import clearScreen, loadData, shuffleData, partitionData
 from utils.progress import printProgressBar, printAnimatedBar
+
+# https://sebastianraschka.com/faq/docs/diff-perceptron-adaline-neuralnet.html
 
 def run(inputData: pd.DataFrame, algoritmo: object) -> None:
     rodada = 0                                                                  # Contador das rodadas
@@ -23,7 +25,6 @@ def run(inputData: pd.DataFrame, algoritmo: object) -> None:
         classificador.treinamento(X_trn, y_trn)                                 # Treina o classificador com os dados separados para treinamento
         y = num.array(y_tst, dtype=int).flatten()                               # Organiza os rotulos da amostra de teste
         y_ = num.array(classificador.predicao(X_tst), dtype=int).flatten()      # Calcula a predição da amostra de teste
-        eqm = classificador.calcularEQM(y, y_)                                  # Calcula o EQM
         rodada += 1
         if len(num.unique(y_tst)) == 2:                                         # Testa se é uma classificação (apenas dois rótulos)
             matriz = classificador.gerarMatrizConfusao(y, y_)                   # Gera a matriz de confusão
@@ -36,33 +37,31 @@ def run(inputData: pd.DataFrame, algoritmo: object) -> None:
             # print("VP =", VP)
             # print("FN =", FN)
             # print("FP =", FP)
+            acuracia = (VP + VN) / (VP + VN + FP + FN)
+            sensibilidade = VP / (VP + FN)
+            especificidade = VN / (VN + FP)
             dados_rodada.append({
                 "rodada": rodada,
-                "acuracia": (VP + VN) / (VP + VN + FP + FN),
-                "sensibilidade": VP / (VP + FN),
-                "especificidade": VN / (VN + FP),
-                "eqm": eqm,
-                "pesos": classificador.getPesos(),
+                "desempenho": acuracia,
+                "acuracia": acuracia,
+                "sensibilidade": sensibilidade,
+                "especificidade": especificidade,
+                "pesos": classificador.getPesos().T,
                 "matriz_confusao": matriz
             })                                                                  # Armazena os dados da rodada
         else:
+            eqm = classificador.calcularEQM(y, y_)                              # Calcula o desempenho
             dados_rodada.append({
                 "rodada": rodada,
+                "desempenho": eqm,
                 "eqm": eqm,
-                "pesos": classificador.getPesos()
+                "pesos": classificador.getPesos().T
             })                                                                  # Armazena os dados da rodada
     printProgressBar(100, 'Concluído !!!')
     dados = pd.DataFrame(dados_rodada)                                          # Organiza os dados para manipulação
     if "acuracia" in dados.columns:                                             # Se encontrar a coluna 'acuracia' no DataFrame, pega os dados referente a classificação
         calculos.append({
             nomeClassificador: {
-                "eqm": [
-                    "{:.4f}".format(num.mean(dados.iloc[:]["eqm"])),
-                    "{:.4f}".format(num.median(dados.iloc[:]["eqm"])),
-                    "{:.4f}".format(num.min(dados.iloc[:]["eqm"])),
-                    "{:.4f}".format(num.max(dados.iloc[:]["eqm"])),
-                    "{:.4f}".format(num.std(dados.iloc[:]["eqm"]))
-                ],
                 "acuracia": [
                     "{:.4f}".format(num.mean(dados.iloc[:]["acuracia"])),
                     "{:.4f}".format(num.median(dados.iloc[:]["acuracia"])),
@@ -98,20 +97,33 @@ def run(inputData: pd.DataFrame, algoritmo: object) -> None:
                 ]
             }
         })
-    print("\n\nFonte de dados:\n", inputData.Name)
     resultados = pd.DataFrame(calculos)
-    print("\nResultados:\n", resultados.keys().values[0])
-    print(pd.DataFrame(data=resultados.iloc[:][nomeClassificador][0], index=["media", "mediana", "minimo", "maximo", "d.padrao"]).T)
+    print("\n")
+    msg = (f"Fonte de dados:\n {inputData.Name}")
+    msg += ("\n")
+    msg += (f"\nResultados:\n {resultados.keys().values[0]}")
+    msg += (f"\n{str(pd.DataFrame(data=resultados.iloc[:][nomeClassificador][0], index=['media', 'mediana', 'minimo', 'maximo', 'd.padrao']).T)}")
+    print(msg)
     # print("dados_rodada\n", dados_rodada)
     # print("dados\n", dados)
     # print("calculos\n", calculos)
     # print("resultados\n", resultados)
-    plot.plot(classificador.getCustos()[::-1])
+    os.chdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), "resultados"))
     plot.title('Convergência')
+    plot.plot(classificador.getCustos()[::-1])
     plot.ylabel('Erros')
     plot.xlabel('Épocas')
-    plot.savefig('custos-%s_%s.png' % (nomeClassificador, inputData.Name))
+    plot.savefig('%s_%s-Convergencia.png' % (nomeClassificador, inputData.Name))
     plot.show()
+    plot.title('Desempenho')
+    plot.plot(dados['desempenho'][::-1])
+    plot.ylabel('Valores')
+    plot.xlabel('Épocas')
+    plot.savefig('%s_%s-Desempenho.png' % (nomeClassificador, inputData.Name))
+    plot.show()
+    with open('%s_%s-Resultados.txt' % (nomeClassificador, inputData.Name), 'w') as arquivo:
+        arquivo.write(msg)
+    dados[['rodada', 'pesos']].to_csv('%s_%s-Pesos.csv' % (nomeClassificador, inputData.Name), index=False)
 
 def close() -> None:
     sys.exit(0)
@@ -128,8 +140,9 @@ try:
         white_wine = loadData("winequality-white.csv", ["fixed acidity", "volatile acidity", "citric acid", "residual sugar", "chlorides", "free sulfur dioxide", "total sulfur dioxide", "density", "pH", "sulphates", "alcohol", "quality"], ";", True)
         white_wine.Name = "white_wine"
         # Inicialização dos classificadores com as taxas de aprendizado e o número de épocas para iterações de cada um
-        percecptron = Perceptron(tx_aprendizado=0.001, n_iteracoes=100)
+        percecptron = Perceptron(tx_aprendizado=0.01, n_iteracoes=100)
         adaline = Adaline(tx_aprendizado=0.0001, n_iteracoes=10)
+        mlp = MultilayerPerceptron(tx_aprendizado=0.0001, n_iteracoes=10)
         clearScreen()
         # Perceptron
         # run(inputData=espiral, algoritmo=percecptron)
@@ -141,6 +154,11 @@ try:
         # run(inputData=aerogerador, algoritmo=adaline)
         # run(inputData=red_wine, algoritmo=adaline)
         # run(inputData=white_wine, algoritmo=adaline)
+        # MultilayerPerceptron
+        # run(inputData=espiral, algoritmo=mlp)
+        # run(inputData=aerogerador, algoritmo=mlp)
+        # run(inputData=red_wine, algoritmo=mlp)
+        # run(inputData=white_wine, algoritmo=mlp)
 
 finally:
     close()

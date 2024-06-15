@@ -1,16 +1,12 @@
 import numpy as np
 import pandas as pd
+from classificadores.classificador import Classificador
 
-# https://medium.com/ensina-ai/rede-neural-perceptron-adaline-8f69dc419d4e
-# https://sebastianraschka.com/faq/docs/diff-perceptron-adaline-neuralnet.html
-
-class Adaline(object):
-    def __init__(self, tx_aprendizado = 0.001, n_iteracoes = 100):
+class Adaline(Classificador):
+    def __init__(self, tx_aprendizado = 0.0001, n_iteracoes = 100):
         # Construtor da classe
         self.eta = tx_aprendizado
         self.epocas = n_iteracoes
-        self.pesos = None
-        self.bias = None
 
     def ativacao(self, amostras):
         # Função de ativação
@@ -20,8 +16,8 @@ class Adaline(object):
         # Funcao de treinamento
         qtde_amostras, qtde_caracteristicas = X.shape
         self.pesos = np.random.uniform(low = -1, high = 1, size = (qtde_caracteristicas + 1)).reshape((qtde_caracteristicas + 1), 1)
-        self.custos = []
         custo = 0
+        self.custos = []
         for _ in range(self.epocas):
             resultado = self.ativacao(X).reshape(qtde_amostras, 1)
             erro = (y - resultado)
@@ -29,10 +25,6 @@ class Adaline(object):
             self.pesos[1:] += self.eta * X.T.dot(erro)
             custo = np.square(erro).sum() / 2.
             self.custos.append(custo)
-
-    def _atualiza_pesos(self, amostra, y_atl, y_pred) -> None:
-        # Funcao que atualiza os pesos
-        ...
 
     def predicao(self, amostras_teste):
         # Funcao de teste
