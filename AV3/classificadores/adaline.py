@@ -29,19 +29,3 @@ class Adaline(Classificador):
     def predicao(self, amostras_teste):
         # Funcao de teste
         return np.where(self.ativacao(amostras_teste) >= 0.0, 1, -1)
-
-    def getPesos(self) -> np.ndarray[float]:
-        return self.pesos
-
-    def gerarMatrizConfusao(self, y_real: np.ndarray[int], y_predito: np.ndarray[int]) -> pd.DataFrame:
-        df = pd.DataFrame({
-            "y_teste": y_real,
-            "y_predito": y_predito
-        })
-        return pd.crosstab(df["y_teste"], df["y_predito"], rownames=["Real"], colnames=["Previsto"])
-
-    def calcularEQM(self, y_real: np.ndarray[int], y_predito: np.ndarray[int]) -> float:
-        return np.square(np.subtract(y_real, y_predito)).mean() / (2 * len(y_real))
-
-    def getCustos(self):
-        return self.custos

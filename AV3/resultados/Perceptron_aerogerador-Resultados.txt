@@ -4,4 +4,4 @@ Fonte de dados:
 Resultados:
  Perceptron
         media   mediana    minimo    maximo d.padrao
-eqm  110.9508  111.0232  103.7811  118.4996   2.7912
+eqm  110.3943  110.0191  102.3650  118.0817   3.1705

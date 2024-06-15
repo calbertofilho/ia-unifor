@@ -4,4 +4,4 @@ Fonte de dados:
 Resultados:
  Adaline
         media   mediana    minimo    maximo d.padrao
-eqm  111.7169  112.0325  104.5702  119.1619   3.0196
+eqm  111.9614  112.4565  103.4461  117.8507   3.2288

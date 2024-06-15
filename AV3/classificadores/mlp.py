@@ -4,8 +4,9 @@ from classificadores.classificador import Classificador
 
 # para uma iteração completa (treinamento ou teste) faça
 #   propagação(data)
-#   volta(data)
-#   ajusta_pesos()
+#   resultado = volta()
+#   ajusta_pesos(resultado)
+# ativacao()
 
 class MultilayerPerceptron(Classificador):
     def __init__(self, tx_aprendizado = 0.0001, n_iteracoes = 100, n_camadas = 3):
@@ -14,9 +15,14 @@ class MultilayerPerceptron(Classificador):
         self.epocas = n_iteracoes
         self.camadas_escondidas = n_camadas
 
+    def _sigmoid(self, X):
+        # Funcao sigmoide logistica
+        return 1 / (1 + np.exp(-X))
+
     def ativacao(self, amostras):
-        # Função de ativação
-        return 
+        # Função de ativação (derivada da funcao sigmoide)
+        X = self._sigmoid(amostras)
+        return X * (1 - X)
 
     def _forward(self, X):
         # Funcao que propaga os dados na rede
@@ -43,19 +49,3 @@ class MultilayerPerceptron(Classificador):
     def predicao(self, amostras_teste):
         # Funcao de teste
         return 
-
-    def getPesos(self) -> np.ndarray[float]:
-        return self.pesos
-
-    def gerarMatrizConfusao(self, y_real: np.ndarray[int], y_predito: np.ndarray[int]) -> pd.DataFrame:
-        df = pd.DataFrame({
-            "y_teste": y_real,
-            "y_predito": y_predito
-        })
-        return pd.crosstab(df["y_teste"], df["y_predito"], rownames=["Real"], colnames=["Previsto"])
-
-    def calcularEQM(self, y_real: np.ndarray[int], y_predito: np.ndarray[int]) -> float:
-        return np.square(np.subtract(y_real, y_predito)).mean() / (2 * len(y_real))
-
-    def getCustos(self):
-        return self.custos
