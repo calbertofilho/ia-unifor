@@ -98,3 +98,6 @@ class Perceptron(object):
 
     def calcularEQM(self, y_real: np.ndarray[int], y_predito: np.ndarray[int]) -> float:
         return np.square(np.subtract(y_real, y_predito)).mean() / (2 * len(y_real))
+
+    def getCustos(self):
+        return

@@ -106,11 +106,12 @@ def run(inputData: pd.DataFrame, algoritmo: object) -> None:
     # print("dados\n", dados)
     # print("calculos\n", calculos)
     # print("resultados\n", resultados)
-    plot.plot(adaline.getCustos()[::-1])
+    plot.plot(classificador.getCustos()[::-1])
     plot.title('Convergência')
     plot.ylabel('Erros')
     plot.xlabel('Épocas')
     plot.savefig('custos-%s_%s.png' % (nomeClassificador, inputData.Name))
+    plot.show()
 
 def close() -> None:
     sys.exit(0)
