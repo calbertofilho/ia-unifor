@@ -145,7 +145,7 @@ try:
         mlp = MultilayerPerceptron(tx_aprendizado=0.0001, n_iteracoes=10)
         clearScreen()
         # Perceptron
-        # run(inputData=espiral, algoritmo=percecptron)
+        run(inputData=espiral, algoritmo=percecptron)
         # run(inputData=aerogerador, algoritmo=percecptron)
         # run(inputData=red_wine, algoritmo=percecptron)
         # run(inputData=white_wine, algoritmo=percecptron)
@@ -153,7 +153,7 @@ try:
         # run(inputData=espiral, algoritmo=adaline)
         # run(inputData=aerogerador, algoritmo=adaline)
         # run(inputData=red_wine, algoritmo=adaline)
-        run(inputData=white_wine, algoritmo=adaline)
+        # run(inputData=white_wine, algoritmo=adaline)
         # MultilayerPerceptron
         # run(inputData=espiral, algoritmo=mlp)
         # run(inputData=aerogerador, algoritmo=mlp)

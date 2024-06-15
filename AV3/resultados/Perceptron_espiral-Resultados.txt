@@ -4,6 +4,6 @@ Fonte de dados:
 Resultados:
  Perceptron
                  media mediana  minimo  maximo d.padrao
-acuracia        0.6243  0.6425  0.2900  0.7325   0.0880
-especificidade  0.6280  0.6391  0.2706  0.8985   0.0941
-sensibilidade   0.6209  0.6402  0.2560  0.7745   0.0971
+acuracia        0.6196  0.6462  0.3250  0.7425   0.0967
+especificidade  0.6158  0.6566  0.2174  0.7742   0.1083
+sensibilidade   0.6235  0.6498  0.2749  0.7979   0.0993
