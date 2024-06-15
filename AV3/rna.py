@@ -9,7 +9,11 @@ from classificadores.perceptron import Perceptron
 from utils.manipulation import clearScreen, loadData, shuffleData, partitionData
 from utils.progress import printProgressBar, printAnimatedBar
 
-# https://sebastianraschka.com/faq/docs/diff-perceptron-adaline-neuralnet.html
+# Referências:
+#  - redes-neurais-artificiais-ivan-nunes-da-silva-2ed-2016.pdf
+#  - Sistemas_Inteligentes_RNA__Atualiza_Template_.pdf
+#  - https://sebastianraschka.com/faq/docs/diff-perceptron-adaline-neuralnet.html
+#  - https://juliocprocha.wordpress.com/2020/03/30/introducao-ao-perceptron-multicamadas-passo-a-passo/
 
 def run(inputData: pd.DataFrame, algoritmo: object) -> None:
     rodada = 0                                                                  # Contador das rodadas
@@ -17,14 +21,14 @@ def run(inputData: pd.DataFrame, algoritmo: object) -> None:
     dados_rodada = []                                                           # Coleta de dados de cada rodada
     calculos = []                                                               # Armazena os cálculos
     classificador = algoritmo                                                   # Algoritmo que vai executar a classificação
-    nomeClassificador = algoritmo.__class__.__name__
+    nomeClassificador = algoritmo.__class__.__name__                            # Nome do classificador
     while (rodada < rodadas):
         printProgressBar((rodada / rodadas) * 100, 'Calculando...')
         data = shuffleData(inputData)                                           # Embaralha os dados
-        X_trn, X_tst, y_trn, y_tst = partitionData(data, 0.8)                   # Particiona os dados no percentual proposto
+        X_trn, X_tst, y_trn, y_tst = partitionData(data, 0.8)                   # Particiona os dados no percentual proposto (80% - 20%)
         classificador.treinamento(X_trn, y_trn)                                 # Treina o classificador com os dados separados para treinamento
-        y = num.array(y_tst, dtype=int).flatten()                               # Organiza os rotulos da amostra de teste
-        y_ = num.array(classificador.predicao(X_tst), dtype=int).flatten()      # Calcula a predição da amostra de teste
+        y = num.array(y_tst, dtype=int).flatten()                               # Organiza os rotulos da amostra de testes
+        y_ = num.array(classificador.predicao(X_tst), dtype=int).flatten()      # Calcula a predição da amostra de testes
         rodada += 1
         if len(num.unique(y_tst)) == 2:                                         # Testa se é uma classificação (apenas dois rótulos)
             matriz = classificador.gerarMatrizConfusao(y, y_)                   # Gera a matriz de confusão
@@ -36,10 +40,10 @@ def run(inputData: pd.DataFrame, algoritmo: object) -> None:
             # print("VN =", VN)
             # print("VP =", VP)
             # print("FN =", FN)
-            # print("FP =", FP)
-            acuracia = (VP + VN) / (VP + VN + FP + FN)
-            sensibilidade = VP / (VP + FN)
-            especificidade = VN / (VN + FP)
+            # print("FP =", FP)                                                 # Calcula as medidas de desempenho:
+            acuracia = (VP + VN) / (VP + VN + FP + FN)                          # Acurácia
+            sensibilidade = VP / (VP + FN)                                      # Sensibilidade
+            especificidade = VN / (VN + FP)                                     # Especificidade
             dados_rodada.append({
                 "rodada": rodada,
                 "desempenho": acuracia,
@@ -50,7 +54,7 @@ def run(inputData: pd.DataFrame, algoritmo: object) -> None:
                 "matriz_confusao": matriz
             })                                                                  # Armazena os dados da rodada
         else:
-            eqm = classificador.calcularEQM(y, y_)                              # Calcula o desempenho
+            eqm = classificador.calcularEQM(y, y_)                              # Calcula o desempenho: EQM
             dados_rodada.append({
                 "rodada": rodada,
                 "desempenho": eqm,
@@ -85,7 +89,7 @@ def run(inputData: pd.DataFrame, algoritmo: object) -> None:
                 ]
             }
         })
-    else:                                                                       # Se não encontrar, pega os dados referente a regressão
+    else:                                                                       # Se não encontrar, pega os dados referente a uma regressão
         calculos.append({
             nomeClassificador: {
                 "eqm": [
@@ -97,7 +101,7 @@ def run(inputData: pd.DataFrame, algoritmo: object) -> None:
                 ]
             }
         })
-    resultados = pd.DataFrame(calculos)
+    resultados = pd.DataFrame(calculos)                                         # Organiza os resultados para apresentação como saída do programa
     print("\n")
     msg = (f"Fonte de dados:\n {inputData.Name}")
     msg += ("\n")
@@ -108,21 +112,26 @@ def run(inputData: pd.DataFrame, algoritmo: object) -> None:
     # print("dados\n", dados)
     # print("calculos\n", calculos)
     # print("resultados\n", resultados)
+    # Mudar a pasta para guardar os arquivos gerados como resultado do programa
     os.chdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), "resultados"))
+    # Plota o gráfico de convergência do classificador
     plot.title('Convergência')
     plot.plot(classificador.getCustos()[::-1])
     plot.ylabel('Erros')
     plot.xlabel('Épocas')
-    plot.savefig('%s_%s-Convergencia.png' % (nomeClassificador, inputData.Name))
+    plot.savefig('%s_%s-Convergencia.png' % (nomeClassificador, inputData.Name))# Cria um arquivo '.png' com o gráfico de convergência
     plot.show()
+    # Plota o gráfico de desempenho do classificador
     plot.title('Desempenho')
     plot.plot(dados['desempenho'][::-1])
     plot.ylabel('Valores')
     plot.xlabel('Épocas')
-    plot.savefig('%s_%s-Desempenho.png' % (nomeClassificador, inputData.Name))
+    plot.savefig('%s_%s-Desempenho.png' % (nomeClassificador, inputData.Name))  # Cria um arquivo '.png' con o gráfico de desempenho
     plot.show()
+    # Cria um arquivo '.txt' com os resultados do programa
     with open('%s_%s-Resultados.txt' % (nomeClassificador, inputData.Name), 'w') as arquivo:
         arquivo.write(msg)
+    # Cria um arquivo '.csv' com a tabela que armazena os pesos de cada rodada
     dados[['rodada', 'pesos']].to_csv('%s_%s-Pesos.csv' % (nomeClassificador, inputData.Name), index=False)
 
 def close() -> None:
@@ -142,19 +151,19 @@ try:
         # Inicialização dos classificadores com as taxas de aprendizado e o número de épocas para iterações de cada um
         percecptron = Perceptron(tx_aprendizado=0.01, n_iteracoes=100)
         adaline = Adaline(tx_aprendizado=0.0001, n_iteracoes=10)
-        mlp = MultilayerPerceptron(tx_aprendizado=0.0001, n_iteracoes=10)
-        clearScreen()
-        # Perceptron
+        mlp = MultilayerPerceptron(tx_aprendizado=0.0001, n_iteracoes=10, n_camadas=3)
+        clearScreen()                                                           # Limpa a tela
+        # Perceptron                                                            # Classificador concluído
         # run(inputData=espiral, algoritmo=percecptron)
         run(inputData=aerogerador, algoritmo=percecptron)
         # run(inputData=red_wine, algoritmo=percecptron)
         # run(inputData=white_wine, algoritmo=percecptron)
-        # Adaline
+        # Adaline                                                               # Classificador concluído
         # run(inputData=espiral, algoritmo=adaline)
         # run(inputData=aerogerador, algoritmo=adaline)
         # run(inputData=red_wine, algoritmo=adaline)
         # run(inputData=white_wine, algoritmo=adaline)
-        # MultilayerPerceptron
+        # MultilayerPerceptron                                                  # Classificador em desenvolvimento, não implementado por completo
         # run(inputData=espiral, algoritmo=mlp)
         # run(inputData=aerogerador, algoritmo=mlp)
         # run(inputData=red_wine, algoritmo=mlp)
