@@ -1,0 +1,7 @@
+Fonte de dados:
+ red_wine
+
+Resultados:
+ Perceptron
+      media mediana  minimo  maximo d.padrao
+eqm  0.0346  0.0346  0.0331  0.0362   0.0006

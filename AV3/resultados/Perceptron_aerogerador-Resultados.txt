@@ -1,0 +1,7 @@
+Fonte de dados:
+ aerogerador
+
+Resultados:
+ Perceptron
+        media   mediana    minimo    maximo d.padrao
+eqm  110.9508  111.0232  103.7811  118.4996   2.7912

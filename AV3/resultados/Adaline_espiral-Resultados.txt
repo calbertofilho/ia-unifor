@@ -1,0 +1,9 @@
+Fonte de dados:
+ espiral
+
+Resultados:
+ Adaline
+                 media mediana  minimo  maximo d.padrao
+acuracia        0.5144  0.5563  0.3900  0.6400   0.0827
+especificidade  0.5138  0.5319  0.3646  0.6599   0.0858
+sensibilidade   0.5146  0.5569  0.3417  0.6596   0.0868

@@ -150,10 +150,10 @@ try:
         # run(inputData=red_wine, algoritmo=percecptron)
         # run(inputData=white_wine, algoritmo=percecptron)
         # Adaline
-        run(inputData=espiral, algoritmo=adaline)
+        # run(inputData=espiral, algoritmo=adaline)
         # run(inputData=aerogerador, algoritmo=adaline)
         # run(inputData=red_wine, algoritmo=adaline)
-        # run(inputData=white_wine, algoritmo=adaline)
+        run(inputData=white_wine, algoritmo=adaline)
         # MultilayerPerceptron
         # run(inputData=espiral, algoritmo=mlp)
         # run(inputData=aerogerador, algoritmo=mlp)

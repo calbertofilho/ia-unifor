@@ -1,0 +1,7 @@
+Fonte de dados:
+ white_wine
+
+Resultados:
+ Adaline
+      media mediana  minimo  maximo d.padrao
+eqm  0.0189  0.0242  0.0123  0.0249   0.0060

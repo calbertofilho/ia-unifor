@@ -1,0 +1,9 @@
+Fonte de dados:
+ espiral
+
+Resultados:
+ Perceptron
+                 media mediana  minimo  maximo d.padrao
+acuracia        0.6243  0.6425  0.2900  0.7325   0.0880
+especificidade  0.6280  0.6391  0.2706  0.8985   0.0941
+sensibilidade   0.6209  0.6402  0.2560  0.7745   0.0971
