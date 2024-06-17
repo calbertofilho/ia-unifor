@@ -1,12 +1,12 @@
 Algoritmo classificador: Adaline
 Fonte de dados: red_wine
-Taxa de aprendizado: 0.0001
-Total de épocas: 10
-Precisão: 1e-10
+Taxa de aprendizado: 0.001
+Total de Ã©pocas: 100
+PrecisÃ£o: 1e-10
 
 Resultados:
       media mediana  minimo  maximo d.padrao
-eqm  0.0536  0.0686  0.0335  0.0724   0.0176
+eqm  0.0520  0.0514  0.0335  0.0717   0.0156
 
-Tempo de execução: 0.503 segundos
-Resultado encontrado na 10ª época
+Tempo de execuÃ§Ã£o: 5.421 segundos
+Resultado encontrado na 1Âª Ã©poca

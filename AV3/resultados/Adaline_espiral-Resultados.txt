@@ -1,14 +1,14 @@
 Algoritmo classificador: Adaline
 Fonte de dados: espiral
-Taxa de aprendizado: 0.0001
-Total de épocas: 10
-Precisão: 1e-10
+Taxa de aprendizado: 0.001
+Total de Ã©pocas: 100
+PrecisÃ£o: 1e-10
 
 Resultados:
                  media mediana  minimo  maximo d.padrao
-acuracia        0.4939  0.4525  0.3600  0.6325   0.0825
-especificidade  0.4962  0.4726  0.3526  0.6536   0.0811
-sensibilidade   0.4921  0.4625  0.3411  0.6749   0.0910
+acuracia        0.6923  0.6925  0.6375  0.7500   0.0237
+especificidade  0.6908  0.6881  0.6029  0.7949   0.0342
+sensibilidade   0.6943  0.6954  0.6176  0.7588   0.0296
 
-Tempo de execução: 0.767 segundos
-Resultado encontrado na 10ª época
+Tempo de execuÃ§Ã£o: 2 minutos e 48.775 segundos
+Resultado encontrado na 51.0Âª Ã©poca

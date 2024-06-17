@@ -51,13 +51,13 @@ class Perceptron(Classificador):
         for epoca in range(self.epocas):
             concluido = True
             for indice, caracteristicas in enumerate(X1):
-                similaridade = np.dot(self.pesos.T, caracteristicas)            # u(t)
+                similaridade = np.dot(caracteristicas, self.pesos.T)            # u(t)
                 resultado = self.ativacao(similaridade)                         # d(t)
-                self.pesos += self.eta * caracteristicas * (y[indice] - resultado)
+                self.pesos += self.eta * caracteristicas * np.subtract(y[indice], resultado)
                 custo += similaridade
                 if resultado != y[indice]:                                      # d(t) != y(t)
                     concluido = False
-            self.custos.append(custo * -1)
+            self.custos.append(custo)
             if concluido:
                 final = epoca+1
                 break
@@ -67,6 +67,5 @@ class Perceptron(Classificador):
         # Funcao de teste
         qtde_amostras, _ = amostras_teste.shape
         X = np.append(np.ones(qtde_amostras).reshape(qtde_amostras, 1), amostras_teste, axis = 1)
-        resultado = np.dot(X, self.pesos)
-        y_predito = self.ativacao(resultado)
-        return y_predito
+        resultado = np.dot(X, self.pesos.T)
+        return self.ativacao(resultado)

@@ -1,11 +1,11 @@
 Algoritmo classificador: Perceptron
 Fonte de dados: red_wine
 Taxa de aprendizado: 0.5
-Total de épocas: 100
+Total de Ã©pocas: 100
 
 Resultados:
       media mediana  minimo  maximo d.padrao
-eqm  0.0346  0.0346  0.0332  0.0363   0.0006
+eqm  0.0346  0.0345  0.0330  0.0364   0.0006
 
-Tempo de execução: 3 minutos e 11.061 segundos
-Resultado encontrado na 100ª época
+Tempo de execuÃ§Ã£o: 2 minutos e 55.676 segundos
+Resultado encontrado na 100Âª Ã©poca

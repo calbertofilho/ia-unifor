@@ -29,11 +29,14 @@ def run(inputData: pd.DataFrame, algoritmo: object) -> None:
         data = shuffleData(inputData)                                           # Embaralha os dados
         X_trn, X_tst, y_trn, y_tst = partitionData(data, 0.8)                   # Particiona os dados no percentual proposto (80% - 20%)
         epoca_final = classificador.treinamento(X_trn, y_trn)                   # Treina o classificador com os dados separados para treinamento
+        #print("\naqui")
         y = num.array(y_tst, dtype=int).flatten()                               # Organiza os rotulos da amostra de testes
         y_ = num.array(classificador.predicao(X_tst), dtype=int).flatten()      # Calcula a predição da amostra de testes
         rodada += 1
+        #print(y.shape, y_.shape)
         if len(num.unique(y_tst)) == 2:                                         # Testa se é uma classificação (apenas dois rótulos)
             matriz = classificador.gerarMatrizConfusao(y, y_)                   # Gera a matriz de confusão
+            #print("matriz")
             # print(matriz)
             VN = int(matriz.loc[1].loc[1])                                      # Valores encontrados como VERDADEIROS NEGATIVOS
             VP = int(matriz.loc[-1].loc[-1])                                    # Valores encontrados como VERDADEIROS POSITIVOS
@@ -58,6 +61,7 @@ def run(inputData: pd.DataFrame, algoritmo: object) -> None:
             })                                                                  # Armazena os dados da rodada
         else:
             eqm = classificador.calcularEQM(y, y_)                              # Calcula o desempenho: EQM
+            #print("eqm")
             dados_rodada.append({
                 "rodada": rodada,
                 "epoca_final": epoca_final,
@@ -140,19 +144,21 @@ def run(inputData: pd.DataFrame, algoritmo: object) -> None:
     # Mudar a pasta para guardar os arquivos gerados como resultado do programa
     os.chdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), "resultados"))
     # Plota o gráfico de convergência do classificador
-    plot.title('Convergência')
-    plot.plot(classificador.getCustos()[::-1])
-    plot.ylabel('Erros')
-    plot.xlabel('Épocas')
+    plot.clf()                                                                  # Limpa a figura do plot
+    plot.title('Convergência')                                                  # Seta o título
+    plot.plot(classificador.getCustos()[::-1])                                  # Plota a série de dados
+    plot.xlabel('Épocas')                                                       # Seta o nome do eixo X
+    plot.ylabel('Erros')                                                        # Seta o nome do eixo Y
     plot.savefig('%s_%s-Convergencia.png' % (nomeClassificador, inputData.Name))# Cria um arquivo '.png' com o gráfico de convergência
-    plot.show()
+    #plot.show()
     # Plota o gráfico de desempenho do classificador
+    plot.clf()
     plot.title('Desempenho')
     plot.plot(dados['desempenho'][::-1])
-    plot.ylabel('Valores')
     plot.xlabel('Épocas')
+    plot.ylabel('Valores')
     plot.savefig('%s_%s-Desempenho.png' % (nomeClassificador, inputData.Name))  # Cria um arquivo '.png' con o gráfico de desempenho
-    plot.show()
+    #plot.show()
     # Cria um arquivo '.txt' com os resultados do programa
     with open('%s_%s-Resultados.txt' % (nomeClassificador, inputData.Name), 'w') as arquivo:
         arquivo.write(msg)
@@ -175,7 +181,7 @@ try:
         white_wine.Name = "white_wine"
         # Inicialização dos classificadores com as taxas de aprendizado e o número de épocas para iterações de cada um
         percecptron = Perceptron(tx_aprendizado=0.5, n_iteracoes=100)
-        adaline = Adaline(tx_aprendizado=0.0001, n_iteracoes=10, precisao=1e-10)
+        adaline = Adaline(tx_aprendizado=0.001, n_iteracoes=100, precisao=1e-10)
         mlp = MultilayerPerceptron(tx_aprendizado=0.001, n_iteracoes=100, n_camadas=3)
         clearScreen()                                                           # Limpa a tela
         # Perceptron                                                            # Classificador concluído
@@ -184,10 +190,10 @@ try:
         # run(inputData=red_wine, algoritmo=percecptron)
         # run(inputData=white_wine, algoritmo=percecptron)
         # Adaline                                                               # Classificador concluído
-        # run(inputData=espiral, algoritmo=adaline)
+        run(inputData=espiral, algoritmo=adaline)
         # run(inputData=aerogerador, algoritmo=adaline)
         # run(inputData=red_wine, algoritmo=adaline)
-        run(inputData=white_wine, algoritmo=adaline)
+        # run(inputData=white_wine, algoritmo=adaline)
         # MultilayerPerceptron                                                  # Classificador em desenvolvimento, não implementado por completo
         # run(inputData=espiral, algoritmo=mlp)
         # run(inputData=aerogerador, algoritmo=mlp)
