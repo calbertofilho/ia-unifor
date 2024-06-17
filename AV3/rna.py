@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 import numpy as num
 import pandas as pd
 import matplotlib.pyplot as plot
@@ -16,6 +17,7 @@ from utils.progress import printProgressBar, printAnimatedBar
 #  - https://juliocprocha.wordpress.com/2020/03/30/introducao-ao-perceptron-multicamadas-passo-a-passo/
 
 def run(inputData: pd.DataFrame, algoritmo: object) -> None:
+    inicio = time.time()                                                        # Medidor do tempo de execução, tomada do tempo inicial
     rodada = 0                                                                  # Contador das rodadas
     rodadas = 100                                                               # Número máximo de rodadas
     dados_rodada = []                                                           # Coleta de dados de cada rodada
@@ -26,7 +28,7 @@ def run(inputData: pd.DataFrame, algoritmo: object) -> None:
         printProgressBar((rodada / rodadas) * 100, 'Calculando...')
         data = shuffleData(inputData)                                           # Embaralha os dados
         X_trn, X_tst, y_trn, y_tst = partitionData(data, 0.8)                   # Particiona os dados no percentual proposto (80% - 20%)
-        classificador.treinamento(X_trn, y_trn)                                 # Treina o classificador com os dados separados para treinamento
+        epoca_final = classificador.treinamento(X_trn, y_trn)                   # Treina o classificador com os dados separados para treinamento
         y = num.array(y_tst, dtype=int).flatten()                               # Organiza os rotulos da amostra de testes
         y_ = num.array(classificador.predicao(X_tst), dtype=int).flatten()      # Calcula a predição da amostra de testes
         rodada += 1
@@ -46,6 +48,7 @@ def run(inputData: pd.DataFrame, algoritmo: object) -> None:
             especificidade = VN / (VN + FP)                                     # Especificidade
             dados_rodada.append({
                 "rodada": rodada,
+                "epoca_final": epoca_final,
                 "desempenho": acuracia,
                 "acuracia": acuracia,
                 "sensibilidade": sensibilidade,
@@ -57,6 +60,7 @@ def run(inputData: pd.DataFrame, algoritmo: object) -> None:
             eqm = classificador.calcularEQM(y, y_)                              # Calcula o desempenho: EQM
             dados_rodada.append({
                 "rodada": rodada,
+                "epoca_final": epoca_final,
                 "desempenho": eqm,
                 "eqm": eqm,
                 "pesos": classificador.getPesos().T
@@ -102,11 +106,32 @@ def run(inputData: pd.DataFrame, algoritmo: object) -> None:
             }
         })
     resultados = pd.DataFrame(calculos)                                         # Organiza os resultados para apresentação como saída do programa
+    fim = time.time()                                                           # Medidor do tempo de execução, tomada do tempo final
     print("\n")
-    msg = (f"Fonte de dados:\n {inputData.Name}")
+    msg = (f"Algoritmo classificador: {resultados.keys().values[0]}\n")
+    msg += (f"Fonte de dados: {inputData.Name}\n")
+    msg += (f"Taxa de aprendizado: {classificador.getTxAprendizado()}\n")
+    msg += (f"Total de épocas: {classificador.getTotalEpocas()}\n")
+    if nomeClassificador == 'Adaline':
+        msg += (f"Precisão: {classificador.getPrecisao()}\n")
     msg += ("\n")
-    msg += (f"\nResultados:\n {resultados.keys().values[0]}")
-    msg += (f"\n{str(pd.DataFrame(data=resultados.iloc[:][nomeClassificador][0], index=['media', 'mediana', 'minimo', 'maximo', 'd.padrao']).T)}")
+    msg += (f"Resultados:\n")
+    msg += (f"{str(pd.DataFrame(data=resultados.iloc[:][nomeClassificador][0], index=['media', 'mediana', 'minimo', 'maximo', 'd.padrao']).T)}\n")
+    msg += ("\n")
+    tempo_execucao = (fim - inicio)
+    if (tempo_execucao >= 60):
+        minutos = tempo_execucao // 60
+        med_minutos = "minutos" if minutos > 1 else "minuto"
+        segundos = tempo_execucao - (minutos * 60)
+        med_segundos = "segundos" if minutos > 1 else "segundo"
+        tempo = (f"{int(minutos)} {med_minutos} e {segundos:.3f} {med_segundos}") if segundos >0 else (f"{int(minutos)} {med_minutos}")
+    else:
+        tempo = (f"{tempo_execucao:.3f} segundos")
+    msg += (f"Tempo de execução: {tempo}\n")
+    if (num.max(dados.iloc[:]["epoca_final"]) == num.min(dados.iloc[:]["epoca_final"])):
+        msg += (f"Resultado encontrado na {num.max(dados.iloc[:]['epoca_final'])}ª época\n")
+    else:
+        msg += (f"Resultado encontrado na {round(num.mean(dados.iloc[:]['epoca_final']), 0)}ª época\n")
     print(msg)
     # print("dados_rodada\n", dados_rodada)
     # print("dados\n", dados)
@@ -149,20 +174,20 @@ try:
         white_wine = loadData("winequality-white.csv", ["fixed acidity", "volatile acidity", "citric acid", "residual sugar", "chlorides", "free sulfur dioxide", "total sulfur dioxide", "density", "pH", "sulphates", "alcohol", "quality"], ";", True)
         white_wine.Name = "white_wine"
         # Inicialização dos classificadores com as taxas de aprendizado e o número de épocas para iterações de cada um
-        percecptron = Perceptron(tx_aprendizado=0.01, n_iteracoes=100)
-        adaline = Adaline(tx_aprendizado=0.0001, n_iteracoes=10)
-        mlp = MultilayerPerceptron(tx_aprendizado=0.0001, n_iteracoes=10, n_camadas=3)
+        percecptron = Perceptron(tx_aprendizado=0.5, n_iteracoes=100)
+        adaline = Adaline(tx_aprendizado=0.0001, n_iteracoes=10, precisao=1e-10)
+        mlp = MultilayerPerceptron(tx_aprendizado=0.001, n_iteracoes=100, n_camadas=3)
         clearScreen()                                                           # Limpa a tela
         # Perceptron                                                            # Classificador concluído
         # run(inputData=espiral, algoritmo=percecptron)
-        run(inputData=aerogerador, algoritmo=percecptron)
+        # run(inputData=aerogerador, algoritmo=percecptron)
         # run(inputData=red_wine, algoritmo=percecptron)
         # run(inputData=white_wine, algoritmo=percecptron)
         # Adaline                                                               # Classificador concluído
         # run(inputData=espiral, algoritmo=adaline)
         # run(inputData=aerogerador, algoritmo=adaline)
         # run(inputData=red_wine, algoritmo=adaline)
-        # run(inputData=white_wine, algoritmo=adaline)
+        run(inputData=white_wine, algoritmo=adaline)
         # MultilayerPerceptron                                                  # Classificador em desenvolvimento, não implementado por completo
         # run(inputData=espiral, algoritmo=mlp)
         # run(inputData=aerogerador, algoritmo=mlp)

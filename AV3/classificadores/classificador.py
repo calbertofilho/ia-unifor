@@ -39,3 +39,9 @@ class Classificador(ABC):
 
     def getPesos(self) -> np.ndarray[float]:
         return self.pesos
+
+    def getTxAprendizado(self) -> float:
+        return self.eta
+
+    def getTotalEpocas(self) -> int:
+        return self.epocas

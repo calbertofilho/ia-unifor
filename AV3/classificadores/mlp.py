@@ -49,3 +49,6 @@ class MultilayerPerceptron(Classificador):
     def predicao(self, amostras_teste):
         # Funcao de teste
         return 
+
+    def getCamadasEscondidas(self):
+        return self.camadas_escondidas

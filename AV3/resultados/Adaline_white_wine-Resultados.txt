@@ -1,7 +1,12 @@
-Fonte de dados:
- white_wine
+Algoritmo classificador: Adaline
+Fonte de dados: white_wine
+Taxa de aprendizado: 0.0001
+Total de épocas: 10
+Precisão: 1e-10
 
 Resultados:
- Adaline
       media mediana  minimo  maximo d.padrao
-eqm  0.0189  0.0242  0.0123  0.0250   0.0060
+eqm  0.0190  0.0243  0.0122  0.0249   0.0060
+
+Tempo de execução: 0.817 segundos
+Resultado encontrado na 10ª época

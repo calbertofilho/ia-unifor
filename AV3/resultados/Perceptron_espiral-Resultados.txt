@@ -1,9 +1,13 @@
-Fonte de dados:
- espiral
+Algoritmo classificador: Perceptron
+Fonte de dados: espiral
+Taxa de aprendizado: 0.5
+Total de épocas: 100
 
 Resultados:
- Perceptron
                  media mediana  minimo  maximo d.padrao
-acuracia        0.6347  0.6550  0.3525  0.7400   0.0775
-especificidade  0.6371  0.6524  0.1962  0.7861   0.0886
-sensibilidade   0.6328  0.6459  0.1970  0.7772   0.0878
+acuracia        0.6339  0.6500  0.3100  0.7475   0.0806
+especificidade  0.6340  0.6519  0.3420  0.7940   0.0848
+sensibilidade   0.6340  0.6496  0.2802  0.7668   0.0897
+
+Tempo de execução: 3 minutos e 46.063 segundos
+Resultado encontrado na 100ª época

@@ -1,7 +1,11 @@
-Fonte de dados:
- white_wine
+Algoritmo classificador: Perceptron
+Fonte de dados: white_wine
+Taxa de aprendizado: 0.5
+Total de épocas: 100
 
 Resultados:
- Perceptron
       media mediana  minimo  maximo d.padrao
-eqm  0.0125  0.0125  0.0122  0.0128   0.0001
+eqm  0.0125  0.0125  0.0122  0.0130   0.0001
+
+Tempo de execução: 9 minutos e 2.373 segundos
+Resultado encontrado na 100ª época

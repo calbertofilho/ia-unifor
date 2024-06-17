@@ -1,7 +1,11 @@
-Fonte de dados:
- aerogerador
+Algoritmo classificador: Perceptron
+Fonte de dados: aerogerador
+Taxa de aprendizado: 0.5
+Total de épocas: 100
 
 Resultados:
- Perceptron
         media   mediana    minimo    maximo d.padrao
-eqm  110.3943  110.0191  102.3650  118.0817   3.1705
+eqm  110.8538  111.0980  101.7226  119.2763   3.0373
+
+Tempo de execução: 5 minutos e 32.980 segundos
+Resultado encontrado na 100ª época

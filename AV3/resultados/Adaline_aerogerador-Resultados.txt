@@ -1,7 +1,12 @@
-Fonte de dados:
- aerogerador
+Algoritmo classificador: Adaline
+Fonte de dados: aerogerador
+Taxa de aprendizado: 0.0001
+Total de épocas: 10
+Precisão: 1e-10
 
 Resultados:
- Adaline
         media   mediana    minimo    maximo d.padrao
-eqm  111.9614  112.4565  103.4461  117.8507   3.2288
+eqm  111.5201  111.4522  105.1523  121.7230   2.9074
+
+Tempo de execução: 0.245 segundos
+Resultado encontrado na 10ª época

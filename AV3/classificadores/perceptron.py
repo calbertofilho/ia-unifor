@@ -30,7 +30,7 @@ from classificadores.classificador import Classificador
 # EQM = 1/(2*N) * (y_real - y_predito)²
 
 class Perceptron(Classificador):
-    def __init__(self, tx_aprendizado = 0.01, n_iteracoes = 100):
+    def __init__(self, tx_aprendizado = 0.5, n_iteracoes = 100):
         # Construtor da classe
         self.eta = tx_aprendizado
         self.epocas = n_iteracoes
@@ -46,14 +46,16 @@ class Perceptron(Classificador):
         self.pesos = np.random.uniform(size = qtde_caracteristicas + 1, low = -1, high = 1)
         final = self.epocas
         custo = 0
+        concluido = True
         self.custos = []
         for epoca in range(self.epocas):
-            concluido = False
+            concluido = True
             for indice, caracteristicas in enumerate(X1):
-                resultado = np.dot(caracteristicas, self.pesos) * y[indice]
-                if resultado <= 0:
-                    custo += resultado
-                    self.pesos += self.eta * caracteristicas * y[indice]
+                similaridade = np.dot(self.pesos.T, caracteristicas)            # u(t)
+                resultado = self.ativacao(similaridade)                         # d(t)
+                self.pesos += self.eta * caracteristicas * (y[indice] - resultado)
+                custo += similaridade
+                if resultado != y[indice]:                                      # d(t) != y(t)
                     concluido = False
             self.custos.append(custo * -1)
             if concluido:
